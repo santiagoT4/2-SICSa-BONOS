@@ -1,0 +1,4681 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="theme-color" content="#1a472a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>SICSa - Sistema de Cobros</title>
+    
+    <!-- ==================== MANIFEST PARA PWA ==================== -->
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlNJQ1NhIC0gU2lzdGVtYSBkZSBDb2Jyb3MiLAogICJzaG9ydF9uYW1lIjogIlNJQ1NhIiwKICAic3RhcnRfdXJsIjogIi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMxYTQ3MmEiLAogICJ0aGVtZV9jb2xvciI6ICIjMWE0NzJhIiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sLDxzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB2aWV3Qm94PScwIDAgNTEyIDUxMic+PHJlY3Qgd2lkdGg9JzUxMicgaGVpZ2h0PSc1MTInIHJ4PSc2MCcgZmlsbD0nIzFhNDcyYScvPjx0ZXh0IHg9JzI1NicgeT0nMzUwJyBmb250LWZhbWlseT0nQXJpYWwnIGZvbnQtc2l6ZT0nMjUwJyBmaWxsPSd3aGl0ZScgdGV4dC1hbmNob3I9J21pZGRsZScgZm9udC13ZWlnaHQ9J2JvbGQnPlNJQ1NhPC90ZXh0Pjwvc3ZnPg=="LAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiCiAgICB9CiAgXQp9">
+    
+    <style>
+        /* ==================== ESTILOS COMPLETOS ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            font-size: 14px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a472a 0%, #0e2a1a 100%);
+            color: white;
+            padding: 8px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .logo-area h1 {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .logo-area p {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-top: -2px;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .stat-badge {
+            background: rgba(255,255,255,0.12);
+            padding: 4px 14px;
+            border-radius: 16px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .stat-badge span {
+            font-weight: bold;
+        }
+
+        .main-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 12px 16px;
+        }
+
+        .pos-tabs {
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            display: flex;
+            padding: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .pos-tab {
+            flex: 1;
+            padding: 10px 16px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+            min-width: 100px;
+        }
+
+        .pos-tab.active {
+            background: linear-gradient(135deg, #1a472a 0%, #0e2a1a 100%);
+            color: white;
+            box-shadow: 0 2px 4px rgba(26, 71, 42, 0.3);
+        }
+
+        .pos-tab:hover:not(.active) {
+            background: #f0f2f5;
+        }
+
+        .filters-bar {
+            background: white;
+            border-radius: 10px;
+            padding: 8px 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-group label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 12px;
+            background: white;
+            min-width: 120px;
+        }
+
+        .filter-group input[type="date"] {
+            min-width: 130px;
+        }
+
+        .filter-group input[type="text"] {
+            min-width: 150px;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 6px;
+            margin-left: auto;
+            flex-wrap: wrap;
+        }
+
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.25s;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .sheet-container {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            max-height: 70vh;
+        }
+
+        .sheet-toolbar {
+            padding: 8px 16px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+
+        .sheet-toolbar .btn {
+            padding: 6px 14px;
+            font-size: 12px;
+        }
+
+        .sheet-info {
+            margin-left: auto;
+            font-size: 12px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .sheet-table-wrapper {
+            overflow-x: auto;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 300px;
+            max-height: 500px;
+        }
+
+        .sheet-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .sheet-table th {
+            background: #1a472a;
+            color: white;
+            padding: 8px 10px;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .sheet-table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid #e9ecef;
+            border-right: 1px solid #f5f5f5;
+            vertical-align: middle;
+        }
+
+        .sheet-table tr:hover td {
+            background: #f8f9fa;
+        }
+
+        .sheet-table tr:nth-child(even) td {
+            background: #fafbfc;
+        }
+
+        .sheet-table tr:nth-child(even):hover td {
+            background: #f0f2f5;
+        }
+
+        .sheet-table .fila-vacia td {
+            height: 38px;
+            text-align: center;
+            color: #999;
+            font-style: italic;
+        }
+
+        .campo-bloqueado {
+            background: #f5f5f5 !important;
+            color: #666 !important;
+            cursor: not-allowed !important;
+        }
+
+        .monto-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .monto-simbolo {
+            position: absolute;
+            left: 8px;
+            font-weight: 600;
+            color: #1a472a;
+            font-size: 13px;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .monto-input {
+            width: 100%;
+            padding: 4px 6px 4px 22px !important;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+            text-align: right;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+            background: white;
+            transition: border-color 0.2s;
+        }
+
+        .monto-input:focus {
+            outline: none;
+            border-color: #1a472a;
+            box-shadow: 0 0 0 2px rgba(26, 71, 42, 0.1);
+        }
+
+        .monto-input:disabled {
+            background: #f5f5f5;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .monto-input.campo-bloqueado {
+            background: #f5f5f5 !important;
+            color: #666 !important;
+            cursor: not-allowed !important;
+        }
+
+        .monto-compra-input {
+            width: 100%;
+            padding: 4px 6px 4px 22px !important;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+            text-align: right;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            background: #f5f5f5 !important;
+            color: #1a472a !important;
+            cursor: not-allowed;
+        }
+
+        .kilos-compra-input, .valor-unitario-compra-input {
+            width: 100%;
+            padding: 4px 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+            text-align: right;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+            background: white;
+            transition: border-color 0.2s;
+        }
+
+        .kilos-compra-input:focus, .valor-unitario-compra-input:focus {
+            outline: none;
+            border-color: #1a472a;
+            box-shadow: 0 0 0 2px rgba(26, 71, 42, 0.1);
+        }
+
+        .btn-aprobar {
+            background: transparent;
+            border: 2px solid #28a745;
+            border-radius: 6px;
+            color: #28a745;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.2s;
+            width: 40px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-aprobar:hover {
+            background: #28a745;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .btn-aprobar.active {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .btn-rechazar {
+            background: transparent;
+            border: 2px solid #dc3545;
+            border-radius: 6px;
+            color: #dc3545;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.2s;
+            width: 40px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-rechazar:hover {
+            background: #dc3545;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .btn-rechazar.active {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+
+        .acciones-botones {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 6px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: #1a472a;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #0e2a1a;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(26, 71, 42, 0.3);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-1px);
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+        .btn-info:hover {
+            background: #138496;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+
+        .btn-sm {
+            padding: 4px 10px;
+            font-size: 11px;
+        }
+
+        .btn-ticket {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 700;
+            transition: all 0.2s;
+            white-space: nowrap;
+            letter-spacing: 0.3px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-ticket:hover {
+            background: #138496;
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(23, 162, 184, 0.4);
+        }
+
+        .btn-ticket:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn-retornar {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 700;
+            transition: all 0.2s;
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-retornar:hover {
+            background: #a71d2a;
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
+        }
+
+        .btn-retornar:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn-primary:disabled {
+            background: #6c757d;
+        }
+
+        .btn-success:disabled {
+            background: #6c757d;
+        }
+
+        .btn-guardando {
+            position: relative;
+            padding-right: 30px !important;
+        }
+
+        .btn-guardando::after {
+            content: '';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: translateY(-50%) rotate(360deg); }
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            color: white;
+            white-space: nowrap;
+        }
+
+        .badge-success {
+            background: #28a745;
+        }
+        .badge-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        .badge-danger {
+            background: #dc3545;
+        }
+        .badge-info {
+            background: #17a2b8;
+        }
+        .badge-cartera {
+            background: #ffc107;
+            color: #333;
+        }
+        .badge-factura {
+            background: #17a2b8;
+        }
+        .badge-auto {
+            background: #6f42c1;
+            font-size: 8px;
+            padding: 1px 6px;
+            margin-left: 4px;
+        }
+        .badge-manual {
+            background: #17a2b8;
+            font-size: 8px;
+            padding: 1px 6px;
+            margin-left: 4px;
+        }
+
+        .alert {
+            padding: 10px 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            display: none;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .alert.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            display: block;
+        }
+
+        .alert.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+            display: block;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .autocomplete-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .autocomplete-container input {
+            width: 100%;
+            padding: 5px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+            background: white;
+            transition: border-color 0.2s;
+        }
+
+        .autocomplete-container input:focus {
+            outline: none;
+            border-color: #1a472a;
+            box-shadow: 0 0 0 2px rgba(26, 71, 42, 0.1);
+        }
+
+        .autocomplete-container input:disabled {
+            background: #f5f5f5;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .autocomplete-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            max-height: 180px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .autocomplete-list.show {
+            display: block;
+        }
+
+        .autocomplete-item {
+            padding: 6px 12px;
+            cursor: pointer;
+            transition: background 0.15s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .autocomplete-item:hover {
+            background: #f0f2f5;
+        }
+
+        .autocomplete-item.selected {
+            background: #1a472a;
+            color: white;
+        }
+
+        .autocomplete-item.cartera {
+            background: #fff3cd;
+            border-left: 3px solid #ffc107;
+            font-weight: 600;
+        }
+
+        .autocomplete-item.cartera:hover {
+            background: #ffe69c;
+        }
+
+        .autocomplete-item .cliente-id {
+            font-size: 10px;
+            color: #666;
+            background: #e9ecef;
+            padding: 1px 8px;
+            border-radius: 8px;
+        }
+
+        .autocomplete-item.selected .cliente-id {
+            background: rgba(255,255,255,0.3);
+            color: white;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-container {
+            background: white;
+            border-radius: 12px;
+            width: 95%;
+            max-width: 1400px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px) scale(0.98); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
+        }
+
+        .modal-header {
+            padding: 16px 24px;
+            background: linear-gradient(135deg, #1a472a 0%, #0e2a1a 100%);
+            color: white;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 16px 24px;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 200px;
+        }
+
+        .modal-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 12px 0;
+            border-bottom: 2px solid #e9ecef;
+            margin-bottom: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px 16px;
+        }
+
+        .modal-filters .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .modal-filters .filter-group label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .modal-filters .filter-group input,
+        .modal-filters .filter-group select {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 12px;
+            background: white;
+            min-width: 120px;
+        }
+
+        .modal-filters .filter-group input[type="date"] {
+            min-width: 130px;
+        }
+
+        .modal-filters .filter-group input[type="text"] {
+            min-width: 150px;
+        }
+
+        .modal-filters .filter-actions {
+            display: flex;
+            gap: 6px;
+            margin-left: auto;
+        }
+
+        .modal-table-wrapper {
+            overflow-x: auto;
+            max-height: 50vh;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+        }
+
+        .modal-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .modal-table th {
+            background: #f8f9fa;
+            color: #333;
+            padding: 8px 10px;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .modal-table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: middle;
+        }
+
+        .modal-table tr:hover td {
+            background: #f8f9fa;
+        }
+
+        .modal-table tr:nth-child(even) td {
+            background: #fafbfc;
+        }
+
+        .modal-table tr:nth-child(even):hover td {
+            background: #f0f2f5;
+        }
+
+        .modal-table .estado-saldado {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .modal-table .estado-pendiente {
+            color: #ffc107;
+            font-weight: 600;
+        }
+
+        .modal-footer {
+            padding: 12px 24px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            border-radius: 0 0 12px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .modal-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .modal-stats .stat-item {
+            font-size: 13px;
+            color: #555;
+        }
+
+        .modal-stats .stat-item strong {
+            color: #1a472a;
+        }
+
+        .modal-stats .stat-item .numero {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .modal-loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .fila-descripcion td {
+            padding: 4px 16px 8px 16px !important;
+            border-bottom: 2px solid #e9ecef !important;
+            background: #fafbfc !important;
+        }
+
+        .fila-descripcion:hover td {
+            background: #f5f6f8 !important;
+        }
+
+        .descripcion-wrapper {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .descripcion-label {
+            font-weight: 600;
+            color: #555;
+            font-size: 11px;
+            white-space: nowrap;
+            padding-top: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .descripcion-textarea {
+            flex: 1;
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+            background: white;
+            resize: vertical;
+            min-height: 36px;
+            max-height: 80px;
+            transition: border-color 0.2s;
+            line-height: 1.5;
+        }
+
+        .descripcion-textarea:focus {
+            outline: none;
+            border-color: #1a472a;
+            box-shadow: 0 0 0 2px rgba(26, 71, 42, 0.1);
+        }
+
+        .descripcion-textarea::placeholder {
+            color: #999;
+            font-style: italic;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 992px) {
+            .main-container {
+                padding: 8px 12px;
+            }
+            .filters-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 6px;
+            }
+            .filter-group {
+                flex-wrap: wrap;
+            }
+            .filter-group select,
+            .filter-group input {
+                min-width: 100px;
+                flex: 1;
+            }
+            .filter-actions {
+                margin-left: 0;
+                justify-content: center;
+            }
+            .header-stats {
+                width: 100%;
+                justify-content: space-around;
+            }
+            .stat-badge {
+                font-size: 11px;
+                padding: 3px 10px;
+            }
+            .sheet-table-wrapper {
+                min-height: 200px;
+                max-height: 350px;
+            }
+            .btn-aprobar, .btn-rechazar {
+                width: 32px;
+                height: 28px;
+                font-size: 15px;
+            }
+            .modal-container {
+                width: 98%;
+                max-height: 95vh;
+            }
+            .modal-filters {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+                padding: 10px 12px;
+            }
+            .modal-filters .filter-group {
+                flex-wrap: wrap;
+            }
+            .modal-filters .filter-group input,
+            .modal-filters .filter-group select {
+                min-width: 80px;
+                flex: 1;
+            }
+            .modal-filters .filter-actions {
+                margin-left: 0;
+                justify-content: center;
+            }
+            .modal-table-wrapper {
+                max-height: 40vh;
+            }
+            .descripcion-wrapper {
+                flex-direction: column;
+                gap: 4px;
+            }
+            .descripcion-label {
+                font-size: 10px;
+            }
+            .descripcion-textarea {
+                font-size: 12px;
+                min-height: 30px;
+            }
+            .fila-descripcion td {
+                padding: 4px 8px 8px 8px !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 6px 12px;
+            }
+            .logo-area h1 {
+                font-size: 15px;
+            }
+            .sheet-table th,
+            .sheet-table td {
+                padding: 4px 6px;
+                font-size: 11px;
+            }
+            .sheet-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 4px;
+            }
+            .sheet-info {
+                margin-left: 0;
+                text-align: center;
+            }
+            .pos-tab {
+                font-size: 11px;
+                padding: 8px 10px;
+                min-width: 60px;
+            }
+            .sheet-table-wrapper {
+                min-height: 150px;
+                max-height: 250px;
+            }
+            .btn-aprobar, .btn-rechazar {
+                width: 28px;
+                height: 24px;
+                font-size: 13px;
+                padding: 2px 4px;
+            }
+            .acciones-botones {
+                gap: 2px;
+            }
+            .monto-simbolo {
+                font-size: 11px;
+                left: 5px;
+            }
+            .monto-input {
+                padding: 3px 4px 3px 18px !important;
+                font-size: 11px;
+            }
+            .modal-container {
+                width: 100%;
+                max-height: 100vh;
+                border-radius: 0;
+            }
+            .modal-header {
+                border-radius: 0;
+                padding: 12px 16px;
+            }
+            .modal-header h2 {
+                font-size: 17px;
+            }
+            .modal-body {
+                padding: 12px 16px;
+            }
+            .modal-table-wrapper {
+                max-height: 35vh;
+            }
+            .modal-table th,
+            .modal-table td {
+                padding: 4px 6px;
+                font-size: 11px;
+            }
+            .modal-stats {
+                gap: 10px;
+            }
+            .modal-stats .stat-item {
+                font-size: 11px;
+            }
+            .modal-stats .stat-item .numero {
+                font-size: 14px;
+            }
+            .btn-retornar {
+                font-size: 9px;
+                padding: 3px 8px;
+            }
+            .btn-ticket {
+                font-size: 9px;
+                padding: 3px 8px;
+            }
+            .descripcion-wrapper {
+                flex-direction: column;
+                gap: 4px;
+            }
+            .descripcion-label {
+                font-size: 10px;
+            }
+            .descripcion-textarea {
+                font-size: 11px;
+                min-height: 28px;
+                max-height: 60px;
+            }
+            .fila-descripcion td {
+                padding: 4px 6px 6px 6px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-stats {
+                flex-direction: column;
+                gap: 4px;
+                align-items: center;
+            }
+            .stat-badge {
+                width: 100%;
+                text-align: center;
+            }
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .filter-group label {
+                margin-bottom: 2px;
+            }
+            .sheet-table-wrapper {
+                min-height: 120px;
+                max-height: 200px;
+            }
+            .btn-aprobar, .btn-rechazar {
+                width: 24px;
+                height: 20px;
+                font-size: 11px;
+            }
+            .monto-simbolo {
+                font-size: 10px;
+                left: 4px;
+            }
+            .monto-input {
+                padding: 2px 3px 2px 15px !important;
+                font-size: 10px;
+            }
+            .modal-table-wrapper {
+                max-height: 30vh;
+            }
+            .modal-table th,
+            .modal-table td {
+                padding: 3px 4px;
+                font-size: 10px;
+            }
+            .modal-stats .stat-item .numero {
+                font-size: 12px;
+            }
+            .btn-retornar {
+                font-size: 8px;
+                padding: 2px 6px;
+            }
+            .btn-ticket {
+                font-size: 8px;
+                padding: 2px 6px;
+            }
+            .descripcion-wrapper {
+                flex-direction: column;
+                gap: 2px;
+            }
+            .descripcion-label {
+                font-size: 9px;
+            }
+            .descripcion-textarea {
+                font-size: 10px;
+                min-height: 24px;
+                max-height: 50px;
+                padding: 4px 6px;
+            }
+            .fila-descripcion td {
+                padding: 2px 4px 4px 4px !important;
+            }
+        }
+
+        @media print {
+            .header,
+            .pos-tabs,
+            .filters-bar,
+            .sheet-toolbar,
+            .modal-overlay {
+                display: none !important;
+            }
+            .sheet-table-wrapper {
+                max-height: none !important;
+                overflow: visible !important;
+                min-height: auto !important;
+            }
+        }
+
+        .spinner {
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<div class="header">
+    <div class="logo-area">
+        <h1>🏦🐟 SICSa</h1>
+        <p>Sistema de Cobros</p>
+    </div>
+    <div class="header-stats">
+        <div class="stat-badge">📊 Registros: <span id="statTotalRegistros">0</span></div>
+        <div class="stat-badge">💰 Hoy: <span id="statTotalHoy">$0</span></div>
+        <div class="stat-badge">🏦 Total: <span id="statTotalCobrado">$0</span></div>
+    </div>
+</div>
+
+<!-- ==================== MAIN CONTENT ==================== -->
+<div class="main-container">
+    <!-- TABS -->
+    <div class="pos-tabs">
+        <button class="pos-tab active" data-tab="ingreso">📝 RECAUDO</button>
+        <button class="pos-tab" data-tab="egresos">💸 EGRESOS</button>
+        <button class="pos-tab" data-tab="compra">🛒 COMPRA</button>
+        <button class="pos-tab" onclick="abrirModalHistorial()">📋 HISTORIAL</button>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters-bar">
+        <div class="filter-group" id="filterVendedor">
+            <label>VENDEDOR</label>
+            <select id="workerSelect">
+                <option value="">TODOS</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>DESDE</label>
+            <input type="date" id="fechaDesde">
+        </div>
+        <div class="filter-group">
+            <label>HASTA</label>
+            <input type="date" id="fechaHasta">
+        </div>
+        <div class="filter-group">
+            <label>CLIENTE</label>
+            <input type="text" id="filtroCliente" placeholder="Buscar cliente...">
+        </div>
+        <div class="filter-actions">
+            <button class="btn btn-success btn-sm" onclick="generarInformeDiario()">📊 INFORME DÍA</button>
+            <button class="btn btn-warning btn-sm" onclick="diagnosticarSistema()">🔍</button>
+            <button class="btn btn-info btn-sm" onclick="diagnosticarCompletoHTML()">🔬 DIAG</button>
+            <button class="btn btn-secondary btn-sm" onclick="diagnosticarRapidoHTML()">⚡ RÁPIDO</button>
+            <button class="btn btn-secondary btn-sm" onclick="verificarEstructuraDatosHTML()">🔎 ESTRUCTURA</button>
+        </div>
+    </div>
+
+    <!-- ==================== PESTAÑA RECAUDO ==================== -->
+    <div id="ingreso" class="tab-pane active">
+        <div id="alertMessageRecaudo" class="alert"></div>
+
+        <div class="sheet-container">
+            <div class="sheet-toolbar">
+                <button class="btn btn-primary" id="agregarFilaRecaudo">➕ AGREGAR</button>
+                <button class="btn btn-primary" id="cargarTransaccionesBtn">📥 CARGAR TRANSACCIONES DÍA</button>
+                <button class="btn btn-success" id="guardarRecaudoBtn">💾 GUARDAR APROBADOS</button>
+                <button class="btn btn-secondary" id="limpiarRecaudoBtn">🗑️ LIMPIAR</button>
+                <button class="btn btn-warning btn-sm" onclick="inicializarSistema()">🔧</button>
+                <div class="sheet-info">
+                    <span id="filasCountRecaudo">0</span> pendientes
+                </div>
+            </div>
+
+            <div class="sheet-table-wrapper" id="recaudoTableWrapper">
+                <table class="sheet-table" id="recaudoTable">
+                    <thead>
+                        <tr>
+                            <th style="width:35px;">#</th>
+                            <th style="width:100px;">FECHA</th>
+                            <th style="width:16%;">FACTURA</th>
+                            <th style="width:20%;">NÚM. FACTURA SIIGO</th>
+                            <th style="width:25%;">CLIENTE</th>
+                            <th style="width:130px;">MONTO</th>
+                            <th style="width:110px;">APROBAR</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recaudoBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PESTAÑA EGRESOS ==================== -->
+    <div id="egresos" class="tab-pane">
+        <div id="alertMessageEgresos" class="alert"></div>
+
+        <div class="sheet-container">
+            <div class="sheet-toolbar">
+                <button class="btn btn-primary" id="agregarFilaEgresos">➕ AGREGAR</button>
+                <button class="btn btn-success" id="guardarEgresosBtn">💾 GUARDAR APROBADOS</button>
+                <button class="btn btn-secondary" id="limpiarEgresosBtn">🗑️ LIMPIAR</button>
+                <div class="sheet-info">
+                    <span id="filasCountEgresos">0</span> pendientes
+                </div>
+            </div>
+
+            <div class="sheet-table-wrapper" id="egresosTableWrapper">
+                <table class="sheet-table" id="egresosTable">
+                    <thead>
+                        <tr>
+                            <th style="width:30px;">#</th>
+                            <th style="width:50px;">FECHA</th>
+                            <th style="width:18%;">CUENTA DÉBITO</th>
+                            <th style="width:10%;">COD_1</th>
+                            <th style="width:10%;">COD_2</th>
+                            <th style="width:18%;">CUENTA CRÉDITO</th>
+                            <th style="width:100px;">MONTO</th>
+                            <th style="width:90px;">APROBAR</th>
+                        </tr>
+                    </thead>
+                    <tbody id="egresosBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PESTAÑA COMPRA ==================== -->
+    <div id="compra" class="tab-pane">
+        <div id="alertMessageCompra" class="alert"></div>
+
+        <div class="sheet-container">
+            <div class="sheet-toolbar">
+                <button class="btn btn-primary" id="agregarFilaCompra">➕ AGREGAR</button>
+                <button class="btn btn-success" id="guardarCompraBtn">💾 GUARDAR APROBADOS</button>
+                <button class="btn btn-secondary" id="limpiarCompraBtn">🗑️ LIMPIAR</button>
+                <div class="sheet-info">
+                    <span id="filasCountCompra">0</span> pendientes
+                </div>
+            </div>
+
+            <div class="sheet-table-wrapper" id="compraTableWrapper">
+                <table class="sheet-table" id="compraTable">
+                    <thead>
+                        <tr>
+                            <th style="width:30px;">#</th>
+                            <th style="width:50px;">FECHA</th>
+                            <th style="width:16%;">CUENTA DÉBITO</th>
+                            <th style="width:9%;">COD_1</th>
+                            <th style="width:9%;">COD_2</th>
+                            <th style="width:16%;">CUENTA CRÉDITO</th>
+                            <th style="width:70px;">KILOS</th>
+                            <th style="width:80px;">VALOR UNIT.</th>
+                            <th style="width:100px;">MONTO</th>
+                            <th style="width:90px;">APROBAR</th>
+                        </tr>
+                    </thead>
+                    <tbody id="compraBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== MODAL HISTORIAL ==================== -->
+<div class="modal-overlay" id="modalHistorial">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2>📋 HISTORIAL DE MOVIMIENTOS</h2>
+            <button class="modal-close" onclick="cerrarModalHistorial()">✕</button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="modal-filters">
+                <div class="filter-group">
+                    <label>DESDE</label>
+                    <input type="date" id="histFechaDesde">
+                </div>
+                <div class="filter-group">
+                    <label>HASTA</label>
+                    <input type="date" id="histFechaHasta">
+                </div>
+                <div class="filter-group">
+                    <label>TIPO FECHA</label>
+                    <select id="histTipoFecha">
+                        <option value="FechaRegistro">📋 Fecha de Registro</option>
+                        <option value="FechaCobro">📅 Fecha de Cobro</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>TIPO</label>
+                    <select id="histTipoOperacion">
+                        <option value="">TODOS</option>
+                        <option value="RECAUDO">📝 RECAUDO</option>
+                        <option value="EGRESO">💸 EGRESO</option>
+                        <option value="COMPRA">🛒 COMPRA</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>ORDENAR POR</label>
+                    <select id="histOrdenar">
+                        <option value="fecha">📅 Fecha</option>
+                        <option value="factura">📄 Factura</option>
+                        <option value="hora">⏰ Hora Registro</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>ORDEN</label>
+                    <select id="histOrden">
+                        <option value="desc">⬇ Descendente</option>
+                        <option value="asc">⬆ Ascendente</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>TRABAJADOR</label>
+                    <input type="text" id="histTrabajador" placeholder="Buscar trabajador...">
+                </div>
+                <div class="filter-group">
+                    <label>CLIENTE</label>
+                    <input type="text" id="histCliente" placeholder="Buscar cliente...">
+                </div>
+                <div class="filter-group">
+                    <label>FACTURA</label>
+                    <input type="text" id="histFactura" placeholder="Buscar factura...">
+                </div>
+                <div class="filter-group">
+                    <label>ESTADO</label>
+                    <select id="histEstado">
+                        <option value="">TODOS</option>
+                        <option value="SALDADO">SALDADO</option>
+                        <option value="PENDIENTE">PENDIENTE</option>
+                        <option value="COMPLETADO">COMPLETADO</option>
+                    </select>
+                </div>
+                <div class="filter-actions">
+                    <button class="btn btn-primary btn-sm" onclick="cargarHistorial()">🔍 FILTRAR</button>
+                    <button class="btn btn-secondary btn-sm" onclick="limpiarFiltrosHistorial()">✖ LIMPIAR</button>
+                    <button class="btn btn-info btn-sm" onclick="cargarHistorial()">🔄 ACTUALIZAR</button>
+                </div>
+            </div>
+            
+            <div id="historialLoading" class="modal-loading">⏳ Cargando historial...</div>
+            <div class="modal-table-wrapper" id="historialTableWrapper" style="display:none;">
+                <table class="modal-table" id="historialTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>FECHA</th>
+                            <th>TIPO</th>
+                            <th>DÉBITO</th>
+                            <th>CRÉDITO</th>
+                            <th>FACTURA</th>
+                            <th>SIIGO</th>
+                            <th>MONTO</th>
+                            <th>KILOS</th>
+                            <th>VLR UNIT</th>
+                            <th>ESTADO</th>
+                            <th style="text-align:center; min-width:80px;">TICKET</th>
+                            <th style="text-align:center; width:100px;">ACCIÓN</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historialBody"></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <div class="modal-stats" id="historialStats">
+                <span class="stat-item">📊 <strong>Total:</strong> <span class="numero" id="histTotalRegistros">0</span></span>
+                <span class="stat-item">💰 <strong>Cobrado:</strong> <span class="numero" id="histTotalCobrado">$0</span></span>
+                <span class="stat-item">✅ <strong>Saldado:</strong> <span class="numero" id="histTotalSaldado">$0</span></span>
+                <span class="stat-item">⏳ <strong>Pendiente:</strong> <span class="numero" id="histTotalPendiente">$0</span></span>
+            </div>
+            <div>
+                <button class="btn btn-secondary btn-sm" onclick="cerrarModalHistorial()">✕ CERRAR</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== MODAL ELIMINAR ABONO (se genera dinámicamente) ==================== -->
+
+<script>
+// ========================================================================
+//  🚀 CONFIGURACIÓN - CAMBIA ESTO CON TU URL DE GS
+// ========================================================================
+
+// 🔥 IMPORTANTE: Reemplaza con la URL de tu App Script desplegado
+const API_URL = 'https://script.google.com/macros/s/TU_ID_AQUI/exec';
+
+// URLs de los sistemas externos
+const URL_SISTEMA_TICKETS = 'https://santiagot4.github.io/SISTEMA_EGRESOS_4/';
+const URL_INFORME_DIARIO = 'https://santiagot4.github.io/INFORME_DIARIO_4/';
+
+// ========================================================================
+//  📡 FUNCIÓN PRINCIPAL PARA LLAMAR A LA API
+// ========================================================================
+
+async function llamarAPI(action, payload = {}) {
+    console.log(`📡 Llamando API: ${action}`, payload);
+    
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'text/plain',
+            },
+            body: JSON.stringify({ action, payload })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        console.log(`✅ Respuesta de ${action}:`, data);
+        return data;
+        
+    } catch (error) {
+        console.error(`❌ Error en ${action}:`, error);
+        return {
+            success: false,
+            error: error.message || 'Error de conexión con el servidor'
+        };
+    }
+}
+
+// ========================================================================
+//  🏗️ VARIABLES GLOBALES
+// ========================================================================
+
+// RECAUDO
+let recaudoData = [];
+let nextIdRecaudo = 1;
+let recaudoTrabajadoresList = [];
+let recaudoFacturasList = [];
+let recaudoClientesList = [];
+let recaudoFacturasConSIIGO = [];
+let recaudoSiigosList = [];
+let recaudoListaCod1 = [];
+let recaudoListaCod2 = [];
+
+// EGRESOS
+let egresosData = [];
+let nextIdEgresos = 1;
+let egresosCuentasCotilList = [];
+let egresosListaCod1 = [];
+let egresosListaCod2 = [];
+
+// COMPRA
+let compraData = [];
+let nextIdCompra = 1;
+let compraCuentasCotilList = [];
+let compraListaCod1 = [];
+let compraListaCod2 = [];
+
+// ========================================================================
+//  🛠️ UTILIDADES
+// ========================================================================
+
+function formatearMontoVisual(valor) {
+    if (valor === undefined || valor === null || isNaN(valor) || valor === '') {
+        return '';
+    }
+    const num = parseFloat(valor);
+    if (num === 0) return '$0';
+    return '$' + num.toLocaleString('es-CO', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+    });
+}
+
+function formatearMonto(valor) {
+    if (valor === undefined || valor === null || isNaN(valor)) return '$0.00';
+    const num = parseFloat(valor);
+    return '$' + num.toLocaleString('es-CO', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
+
+function parsearMontoDesdeVisual(texto) {
+    if (!texto) return 0;
+    const limpio = texto.replace(/[$,]/g, '').trim();
+    const num = parseFloat(limpio);
+    return isNaN(num) ? 0 : num;
+}
+
+function obtenerValorNumerico(input) {
+    if (input.value.includes('$')) {
+        return parsearMontoDesdeVisual(input.value);
+    }
+    return parseFloat(input.value) || 0;
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    });
+}
+
+function mostrarAlerta(mensaje, tipo, alertId) {
+    const alerta = document.getElementById(alertId);
+    if (!alerta) return;
+    alerta.textContent = mensaje;
+    alerta.className = `alert ${tipo}`;
+    console.log('🔔 Alerta:', tipo, '-', mensaje);
+    
+    const tiempo = tipo === 'error' ? 6000 : 20000;
+    setTimeout(() => alerta.className = 'alert', tiempo);
+}
+
+// ========================================================================
+//  📋 FUNCIONES DE CARGA DE DATOS (API)
+// ========================================================================
+
+async function cargarTrabajadoresRecaudo() {
+    console.log('👤 [RECAUDO] Cargando trabajadores via API...');
+    const resultado = await llamarAPI('getTrabajadores');
+    
+    if (resultado.success && resultado.data && resultado.data.trabajadores) {
+        recaudoTrabajadoresList = resultado.data.trabajadores;
+        console.log('👤 [RECAUDO] Trabajadores cargados:', recaudoTrabajadoresList.length);
+        
+        const select = document.getElementById('workerSelect');
+        select.innerHTML = '<option value="">TODOS</option>';
+        recaudoTrabajadoresList.forEach(trab => {
+            const option = document.createElement('option');
+            option.value = trab.nombre;
+            const textoMostrar = trab.codigo ? `${trab.nombre} (${trab.codigo})` : trab.nombre;
+            option.textContent = textoMostrar;
+            if (trab.predefinido) {
+                option.textContent += ' ⭐';
+            }
+            select.appendChild(option);
+        });
+        
+        let trabajadorSeleccionado = recaudoTrabajadoresList.find(t => t.predefinido === true);
+        if (trabajadorSeleccionado) {
+            select.value = trabajadorSeleccionado.nombre;
+        } else if (recaudoTrabajadoresList.length > 0) {
+            select.value = recaudoTrabajadoresList[0].nombre;
+        }
+        select.dispatchEvent(new Event('change'));
+    } else {
+        console.error('❌ Error al cargar trabajadores:', resultado.error);
+        mostrarAlerta('Error al cargar trabajadores: ' + (resultado.error || 'Desconocido'), 'error', 'alertMessageRecaudo');
+    }
+}
+
+async function cargarFacturasRecaudo() {
+    console.log('📋 [RECAUDO] Cargando facturas via API...');
+    const resultado = await llamarAPI('getFacturas');
+    
+    if (resultado.success && resultado.data && resultado.data.facturas) {
+        recaudoFacturasList = resultado.data.facturas || ['CARTERA'];
+        console.log('📋 [RECAUDO] Facturas cargadas:', recaudoFacturasList.length);
+    } else {
+        recaudoFacturasList = ['CARTERA'];
+        console.warn('⚠️ Usando facturas por defecto');
+    }
+}
+
+async function cargarFacturasConSIIGORecaudo() {
+    console.log('📋 [RECAUDO] Cargando facturas con SIIGO via API...');
+    const resultado = await llamarAPI('getFacturasConSIIGO');
+    
+    if (resultado.success && resultado.data && resultado.data.facturas) {
+        recaudoFacturasConSIIGO = resultado.data.facturas || [];
+        console.log('📋 [RECAUDO] Facturas con SIIGO cargadas:', recaudoFacturasConSIIGO.length);
+        recaudoSiigosList = recaudoFacturasConSIIGO
+            .map(item => item.siigo)
+            .filter(siigo => siigo && siigo !== '')
+            .sort();
+    } else {
+        recaudoFacturasConSIIGO = [];
+        recaudoSiigosList = [];
+        console.warn('⚠️ No se pudieron cargar facturas con SIIGO');
+    }
+}
+
+async function cargarSIIGOSRecaudo() {
+    console.log('📋 [RECAUDO] Cargando lista de SIIGO via API...');
+    const resultado = await llamarAPI('getTodosSIIGO');
+    
+    if (resultado.success && resultado.data && resultado.data.siigos) {
+        recaudoSiigosList = resultado.data.siigos || [];
+        console.log('📋 [RECAUDO] SIIGOs cargados:', recaudoSiigosList.length);
+    }
+}
+
+async function cargarClientesRecaudo() {
+    console.log('👤 [RECAUDO] Cargando clientes via API...');
+    const resultado = await llamarAPI('getClientes');
+    
+    if (resultado.success && resultado.data && resultado.data.clientes) {
+        recaudoClientesList = resultado.data.clientes || [];
+        console.log('👤 [RECAUDO] Clientes cargados:', recaudoClientesList.length);
+    } else {
+        recaudoClientesList = [];
+        console.warn('⚠️ No se pudieron cargar clientes');
+    }
+}
+
+async function cargarListasCodigosRecaudo() {
+    console.log('📋 [RECAUDO] Cargando listas de códigos via API...');
+    const resultado = await llamarAPI('getListasCodigos');
+    
+    if (resultado.success && resultado.data) {
+        recaudoListaCod1 = resultado.data.cod1 || [];
+        recaudoListaCod2 = resultado.data.cod2 || [];
+        console.log('📋 [RECAUDO] COD_1 cargados:', recaudoListaCod1.length);
+        console.log('📋 [RECAUDO] COD_2 cargados:', recaudoListaCod2.length);
+    } else {
+        recaudoListaCod1 = [];
+        recaudoListaCod2 = [];
+        console.warn('⚠️ No se pudieron cargar listas de códigos');
+    }
+}
+
+async function cargarCuentasCotilEgresos() {
+    console.log('🏦 [EGRESOS] Cargando cuentas COTIL via API...');
+    const resultado = await llamarAPI('getCuentasCotil');
+    
+    if (resultado.success && resultado.data && resultado.data.cuentas) {
+        egresosCuentasCotilList = resultado.data.cuentas || [];
+        console.log('🏦 [EGRESOS] Cuentas COTIL cargadas:', egresosCuentasCotilList.length);
+    } else {
+        egresosCuentasCotilList = [];
+        console.warn('⚠️ No se pudieron cargar cuentas COTIL');
+    }
+}
+
+async function cargarListasCodigosEgresos() {
+    console.log('📋 [EGRESOS] Cargando listas de códigos via API...');
+    const resultado = await llamarAPI('getListasCodigos');
+    
+    if (resultado.success && resultado.data) {
+        egresosListaCod1 = resultado.data.cod1 || [];
+        egresosListaCod2 = resultado.data.cod2 || [];
+        console.log('📋 [EGRESOS] COD_1 cargados:', egresosListaCod1.length);
+        console.log('📋 [EGRESOS] COD_2 cargados:', egresosListaCod2.length);
+    } else {
+        egresosListaCod1 = [];
+        egresosListaCod2 = [];
+        console.warn('⚠️ No se pudieron cargar listas de códigos para egresos');
+    }
+}
+
+async function cargarCuentasCotilCompra() {
+    console.log('🏦 [COMPRA] Cargando cuentas COTIL via API...');
+    const resultado = await llamarAPI('getCuentasCotil');
+    
+    if (resultado.success && resultado.data && resultado.data.cuentas) {
+        compraCuentasCotilList = resultado.data.cuentas || [];
+        console.log('🏦 [COMPRA] Cuentas COTIL cargadas:', compraCuentasCotilList.length);
+    } else {
+        compraCuentasCotilList = [];
+        console.warn('⚠️ No se pudieron cargar cuentas COTIL para compras');
+    }
+}
+
+async function cargarListasCodigosCompra() {
+    console.log('📋 [COMPRA] Cargando listas de códigos via API...');
+    const resultado = await llamarAPI('getListasCodigos');
+    
+    if (resultado.success && resultado.data) {
+        compraListaCod1 = resultado.data.cod1 || [];
+        compraListaCod2 = resultado.data.cod2 || [];
+        console.log('📋 [COMPRA] COD_1 cargados:', compraListaCod1.length);
+        console.log('📋 [COMPRA] COD_2 cargados:', compraListaCod2.length);
+    } else {
+        compraListaCod1 = [];
+        compraListaCod2 = [];
+        console.warn('⚠️ No se pudieron cargar listas de códigos para compras');
+    }
+}
+
+// ========================================================================
+//  🔍 FUNCIONES DE AUTOCOMPLETE (LOCAL)
+// ========================================================================
+
+function buscarFacturasRecaudoLocal(texto) {
+    if (!texto || texto.trim() === '') return recaudoFacturasList;
+    const textoBusqueda = texto.toLowerCase().trim();
+    const resultados = recaudoFacturasList.filter(factura => 
+        factura.toLowerCase().includes(textoBusqueda)
+    );
+    if (textoBusqueda.includes('cartera') && !resultados.includes('CARTERA')) {
+        resultados.unshift('CARTERA');
+    }
+    return resultados;
+}
+
+function buscarSIIGORecaudoLocal(texto) {
+    if (!texto || texto.trim() === '') return recaudoSiigosList;
+    const textoBusqueda = texto.toLowerCase().trim();
+    const resultados = recaudoSiigosList.filter(siigo => 
+        siigo.toLowerCase().includes(textoBusqueda)
+    );
+    if (recaudoFacturasConSIIGO.length > 0) {
+        recaudoFacturasConSIIGO.forEach(item => {
+            if (item.factura.toLowerCase().includes(textoBusqueda) && 
+                !resultados.includes(item.siigo) && 
+                item.siigo && item.siigo !== '') {
+                resultados.push(item.siigo);
+            }
+        });
+    }
+    return resultados.sort();
+}
+
+function buscarClientesRecaudoLocal(texto) {
+    if (!texto || texto.trim() === '') return recaudoClientesList;
+    const textoBusqueda = texto.toLowerCase().trim();
+    return recaudoClientesList.filter(cliente => 
+        cliente.nombre.toLowerCase().includes(textoBusqueda) ||
+        cliente.id.toLowerCase().includes(textoBusqueda)
+    );
+}
+
+function buscarCuentasCotilEgresosLocal(texto) {
+    if (!texto || texto.trim() === '') return egresosCuentasCotilList;
+    const textoBusqueda = texto.toLowerCase().trim();
+    return egresosCuentasCotilList.filter(cuenta => 
+        cuenta.nombre.toLowerCase().includes(textoBusqueda) ||
+        cuenta.codigo.toLowerCase().includes(textoBusqueda)
+    );
+}
+
+function buscarCodigosEgresosLocal(texto) {
+    if (!texto || texto.trim() === '') return egresosListaCod1;
+    const textoBusqueda = texto.toLowerCase().trim();
+    return egresosListaCod1.filter(cod => 
+        cod.toLowerCase().includes(textoBusqueda)
+    );
+}
+
+function buscarCuentasCotilCompraLocal(texto) {
+    if (!texto || texto.trim() === '') return compraCuentasCotilList;
+    const textoBusqueda = texto.toLowerCase().trim();
+    return compraCuentasCotilList.filter(cuenta => 
+        cuenta.nombre.toLowerCase().includes(textoBusqueda) ||
+        cuenta.codigo.toLowerCase().includes(textoBusqueda)
+    );
+}
+
+function buscarCodigosCompraLocal(texto) {
+    if (!texto || texto.trim() === '') return compraListaCod1;
+    const textoBusqueda = texto.toLowerCase().trim();
+    return compraListaCod1.filter(cod => 
+        cod.toLowerCase().includes(textoBusqueda)
+    );
+}
+
+// ========================================================================
+//  🖥️ FUNCIONES DE AUTOCOMPLETE (VISUAL)
+// ========================================================================
+
+function mostrarAutocomplete(inputElement, resultados, tipo) {
+    const container = inputElement.parentElement;
+    let list = container.querySelector('.autocomplete-list');
+    
+    if (!list) {
+        list = document.createElement('div');
+        list.className = 'autocomplete-list';
+        container.appendChild(list);
+    }
+    
+    if (!resultados || resultados.length === 0) {
+        list.classList.remove('show');
+        return;
+    }
+    
+    list.innerHTML = '';
+    
+    resultados.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'autocomplete-item';
+        
+        if (tipo === 'cuenta_egreso' || tipo === 'cuenta_compra') {
+            div.innerHTML = `
+                <span>🏦 ${item.codigo} - ${item.nombre}</span>
+                <span class="cliente-id">${item.codigo}</span>
+            `;
+        } else if (tipo === 'factura_recaudo') {
+            if (item === 'CARTERA') {
+                div.classList.add('cartera');
+                div.innerHTML = `<span>📂 CARTERA</span>`;
+            } else {
+                div.innerHTML = `<span>📄 ${item}</span>`;
+            }
+        } else if (tipo === 'siigo_recaudo') {
+            const facturaItem = recaudoFacturasConSIIGO.find(f => f.siigo === item);
+            const factura = facturaItem ? facturaItem.factura : '';
+            if (item === 'CARTERA_S') {
+                div.classList.add('cartera');
+                div.innerHTML = `
+                    <span>📂 CARTERA_S</span>
+                    <span class="cliente-id">CARTERA</span>
+                `;
+            } else {
+                div.innerHTML = `
+                    <span>🔢 ${item}</span>
+                    <span class="cliente-id">${factura || 'Sin factura'}</span>
+                `;
+            }
+        } else if (tipo === 'cliente_recaudo') {
+            div.innerHTML = `
+                <span>${item.nombre}</span>
+                <span class="cliente-id">ID: ${item.id}</span>
+                <span class="cliente-id" style="background:#28a745; color:white;">🏙️ ${item.ciudad || 'Sin ciudad'}</span>
+            `;
+        } else if (tipo === 'codigo_egreso' || tipo === 'cod1_egreso' || tipo === 'cod2_egreso') {
+            div.innerHTML = `
+                <span>📌 ${item}</span>
+                <span class="cliente-id" style="background:#17a2b8; color:white;">${tipo === 'cod1_egreso' ? 'COD_1' : 'COD_2'}</span>
+            `;
+        } else if (tipo === 'codigo_compra') {
+            div.innerHTML = `
+                <span>📌 ${item}</span>
+                <span class="cliente-id" style="background:#6f42c1; color:white;">CÓDIGO</span>
+            `;
+        }
+        
+        div.addEventListener('click', function() {
+            if (tipo === 'cuenta_egreso') {
+                seleccionarCuentaEgreso(inputElement, item);
+            } else if (tipo === 'cuenta_compra') {
+                seleccionarCuentaCompra(inputElement, item);
+            } else if (tipo === 'factura_recaudo') {
+                seleccionarFacturaRecaudo(inputElement, item);
+            } else if (tipo === 'siigo_recaudo') {
+                seleccionarSIIGORecaudo(inputElement, item);
+            } else if (tipo === 'cliente_recaudo') {
+                seleccionarClienteRecaudo(inputElement, item);
+            } else if (tipo === 'codigo_egreso' || tipo === 'cod1_egreso' || tipo === 'cod2_egreso') {
+                seleccionarCodigoEgreso(inputElement, item, tipo);
+            } else if (tipo === 'codigo_compra') {
+                seleccionarCodigoCompra(inputElement, item);
+            }
+        });
+        
+        list.appendChild(div);
+    });
+    
+    list.classList.add('show');
+}
+
+function ocultarAutocomplete(inputElement) {
+    const container = inputElement.parentElement;
+    const list = container.querySelector('.autocomplete-list');
+    if (list) list.classList.remove('show');
+}
+
+// ========================================================================
+//  🎯 SELECCIONES - RECAUDO
+// ========================================================================
+
+function seleccionarFacturaRecaudo(inputElement, factura) {
+    const rowId = inputElement.dataset.id;
+    
+    inputElement.value = factura;
+    actualizarCampoFila('recaudo', rowId, 'factura', factura);
+    ocultarAutocomplete(inputElement);
+    
+    const siigoItem = recaudoFacturasConSIIGO.find(item => item.factura === factura);
+    const siigoValue = siigoItem ? siigoItem.siigo : (factura === 'CARTERA' ? 'CARTERA_S' : '');
+    
+    const siigoInput = document.querySelector(`.sii-go-input[data-id="${rowId}"]`);
+    if (siigoInput) {
+        siigoInput.value = siigoValue;
+        actualizarCampoFila('recaudo', rowId, 'numFacturaSIIGO', siigoValue);
+    }
+    
+    obtenerDatosFacturaAPI(rowId, factura);
+}
+
+async function obtenerDatosFacturaAPI(rowId, factura) {
+    const resultado = await llamarAPI('getDatosFactura', { factura: factura });
+    
+    if (resultado.success && resultado.data) {
+        const data = resultado.data;
+        const row = document.querySelector(`#recaudoBody tr[data-id="${rowId}"]`);
+        if (!row) return;
+        
+        const clienteInput = row.querySelector('.cliente-input');
+        const montoInput = row.querySelector('.monto-input');
+        
+        if (data.esCartera) {
+            clienteInput.disabled = false;
+            clienteInput.classList.remove('campo-bloqueado');
+            clienteInput.value = '';
+            clienteInput.placeholder = 'Buscar cliente...';
+            if (montoInput) {
+                montoInput.value = '';
+                montoInput.disabled = false;
+                montoInput.classList.remove('campo-bloqueado');
+                montoInput.dataset.valorNumerico = 0;
+            }
+            actualizarCampoFila('recaudo', rowId, 'cliente', '');
+            actualizarCampoFila('recaudo', rowId, 'clienteID', '');
+            actualizarCampoFila('recaudo', rowId, 'ciudad', '');
+            actualizarCampoFila('recaudo', rowId, 'montoPagado', 0);
+        } else {
+            clienteInput.disabled = true;
+            clienteInput.classList.add('campo-bloqueado');
+            clienteInput.value = data.cliente;
+            clienteInput.placeholder = 'Cliente bloqueado';
+            
+            if (montoInput) {
+                const montoFormateado = formatearMontoVisual(data.monto);
+                montoInput.value = montoFormateado;
+                montoInput.disabled = false;
+                montoInput.classList.remove('campo-bloqueado');
+                montoInput.dataset.valorNumerico = data.monto;
+            }
+            
+            actualizarCampoFila('recaudo', rowId, 'cliente', data.cliente);
+            actualizarCampoFila('recaudo', rowId, 'clienteID', data.clienteID || '');
+            actualizarCampoFila('recaudo', rowId, 'ciudad', data.ciudad || '');
+            actualizarCampoFila('recaudo', rowId, 'montoPagado', data.monto);
+            
+            if (data.numFacturaSIIGO) {
+                const siigoInput = row.querySelector('.sii-go-input');
+                if (siigoInput) {
+                    siigoInput.value = data.numFacturaSIIGO;
+                    actualizarCampoFila('recaudo', rowId, 'numFacturaSIIGO', data.numFacturaSIIGO);
+                }
+            }
+        }
+    } else {
+        mostrarAlerta('Error al obtener datos de factura: ' + (resultado.error || 'Desconocido'), 'error', 'alertMessageRecaudo');
+    }
+}
+
+function seleccionarSIIGORecaudo(inputElement, siigo) {
+    const rowId = inputElement.dataset.id;
+    
+    inputElement.value = siigo;
+    actualizarCampoFila('recaudo', rowId, 'numFacturaSIIGO', siigo);
+    ocultarAutocomplete(inputElement);
+    
+    obtenerDatosPorSIIGOAPI(rowId, siigo);
+}
+
+async function obtenerDatosPorSIIGOAPI(rowId, siigo) {
+    const resultado = await llamarAPI('getDatosPorSIIGO', { siigo: siigo });
+    
+    if (resultado.success && resultado.data) {
+        const data = resultado.data;
+        const row = document.querySelector(`#recaudoBody tr[data-id="${rowId}"]`);
+        if (!row) return;
+        
+        const facturaInput = row.querySelector('.factura-input');
+        const clienteInput = row.querySelector('.cliente-input');
+        const montoInput = row.querySelector('.monto-input');
+        
+        if (data.esCartera) {
+            if (facturaInput) {
+                facturaInput.value = 'CARTERA';
+                actualizarCampoFila('recaudo', rowId, 'factura', 'CARTERA');
+            }
+            if (clienteInput) {
+                clienteInput.disabled = false;
+                clienteInput.classList.remove('campo-bloqueado');
+                clienteInput.value = '';
+                clienteInput.placeholder = 'Buscar cliente...';
+            }
+            if (montoInput) {
+                montoInput.value = '';
+                montoInput.disabled = false;
+                montoInput.classList.remove('campo-bloqueado');
+                montoInput.dataset.valorNumerico = 0;
+            }
+            actualizarCampoFila('recaudo', rowId, 'cliente', '');
+            actualizarCampoFila('recaudo', rowId, 'clienteID', '');
+            actualizarCampoFila('recaudo', rowId, 'ciudad', '');
+            actualizarCampoFila('recaudo', rowId, 'montoPagado', 0);
+        } else {
+            if (facturaInput) {
+                facturaInput.value = data.factura;
+                actualizarCampoFila('recaudo', rowId, 'factura', data.factura);
+            }
+            if (clienteInput) {
+                clienteInput.disabled = true;
+                clienteInput.classList.add('campo-bloqueado');
+                clienteInput.value = data.cliente;
+                clienteInput.placeholder = 'Cliente bloqueado';
+            }
+            if (montoInput) {
+                const montoFormateado = formatearMontoVisual(data.monto);
+                montoInput.value = montoFormateado;
+                montoInput.disabled = false;
+                montoInput.classList.remove('campo-bloqueado');
+                montoInput.dataset.valorNumerico = data.monto;
+            }
+            actualizarCampoFila('recaudo', rowId, 'cliente', data.cliente);
+            actualizarCampoFila('recaudo', rowId, 'clienteID', data.clienteID || '');
+            actualizarCampoFila('recaudo', rowId, 'ciudad', data.ciudad || '');
+            actualizarCampoFila('recaudo', rowId, 'montoPagado', data.monto);
+        }
+    } else {
+        mostrarAlerta('Error al buscar SIIGO: ' + (resultado.error || 'Desconocido'), 'error', 'alertMessageRecaudo');
+    }
+}
+
+function seleccionarClienteRecaudo(inputElement, cliente) {
+    inputElement.value = cliente.nombre;
+    ocultarAutocomplete(inputElement);
+    const rowId = inputElement.dataset.id;
+    
+    actualizarCampoFila('recaudo', rowId, 'cliente', cliente.nombre);
+    actualizarCampoFila('recaudo', rowId, 'clienteID', cliente.id);
+    actualizarCampoFila('recaudo', rowId, 'ciudad', cliente.ciudad || '');
+    
+    console.log('🏙️ Cliente seleccionado:', cliente.nombre, 'ID:', cliente.id, 'Ciudad:', cliente.ciudad);
+}
+
+// ========================================================================
+//  🎯 SELECCIONES - EGRESOS
+// ========================================================================
+
+function seleccionarCuentaEgreso(inputElement, cuenta) {
+    const rowId = inputElement.dataset.id;
+    const tipo = inputElement.dataset.tipo;
+    
+    inputElement.value = `${cuenta.codigo} - ${cuenta.nombre}`;
+    ocultarAutocomplete(inputElement);
+    
+    if (tipo === 'debito') {
+        actualizarCampoFila('egresos', rowId, 'cuentaDebitoCodigo', cuenta.codigo);
+        actualizarCampoFila('egresos', rowId, 'cuentaDebitoNombre', cuenta.nombre);
+    } else if (tipo === 'credito') {
+        actualizarCampoFila('egresos', rowId, 'cuentaCreditoCodigo', cuenta.codigo);
+        actualizarCampoFila('egresos', rowId, 'cuentaCreditoNombre', cuenta.nombre);
+    }
+}
+
+function seleccionarCodigoEgreso(inputElement, codigo, tipo) {
+    const rowId = inputElement.dataset.id;
+    inputElement.value = codigo;
+    ocultarAutocomplete(inputElement);
+    
+    if (tipo === 'cod1_egreso' || tipo === 'codigo_egreso') {
+        actualizarCampoFila('egresos', rowId, 'cod1', codigo);
+    }
+    if (tipo === 'cod2_egreso' || tipo === 'codigo_egreso') {
+        actualizarCampoFila('egresos', rowId, 'cod2', codigo);
+    }
+}
+
+// ========================================================================
+//  🎯 SELECCIONES - COMPRA
+// ========================================================================
+
+function seleccionarCuentaCompra(inputElement, cuenta) {
+    const rowId = inputElement.dataset.id;
+    const tipo = inputElement.dataset.tipo;
+    
+    inputElement.value = `${cuenta.codigo} - ${cuenta.nombre}`;
+    ocultarAutocomplete(inputElement);
+    
+    if (tipo === 'debito') {
+        actualizarCampoFilaCompra(rowId, 'cuentaDebitoCodigo', cuenta.codigo);
+        actualizarCampoFilaCompra(rowId, 'cuentaDebitoNombre', cuenta.nombre);
+    } else if (tipo === 'credito') {
+        actualizarCampoFilaCompra(rowId, 'cuentaCreditoCodigo', cuenta.codigo);
+        actualizarCampoFilaCompra(rowId, 'cuentaCreditoNombre', cuenta.nombre);
+    }
+}
+
+function seleccionarCodigoCompra(inputElement, codigo) {
+    const rowId = inputElement.dataset.id;
+    inputElement.value = codigo;
+    ocultarAutocomplete(inputElement);
+    
+    const inputClass = inputElement.className;
+    if (inputClass.includes('cod1')) {
+        actualizarCampoFilaCompra(rowId, 'cod1', codigo);
+    } else if (inputClass.includes('cod2')) {
+        actualizarCampoFilaCompra(rowId, 'cod2', codigo);
+    }
+}
+
+// ========================================================================
+//  📊 FUNCIONES DE TABLA - RECAUDO
+// ========================================================================
+
+function agregarFilaRecaudo(data = null) {
+    const rowId = nextIdRecaudo++;
+    const hoy = new Date().toISOString().split('T')[0];
+
+    const fila = {
+        id: rowId,
+        fechaCobro: data?.fechaCobro || hoy,
+        factura: data?.factura || '',
+        numFacturaSIIGO: data?.numFacturaSIIGO || '',
+        cliente: data?.cliente || '',
+        clienteID: data?.clienteID || '',
+        ciudad: data?.ciudad || '',
+        montoPagado: data?.montoPagado || 0,
+        cod1: data?.cod1 || '',
+        cod2: data?.cod2 || '',
+        aprobado: false,
+        esManual: true,
+        tipoOperacion: 'RECAUDO'
+    };
+
+    recaudoData.push(fila);
+    renderizarRecaudo();
+}
+
+function renderizarRecaudo() {
+    const tbody = document.getElementById('recaudoBody');
+    const trabajador = document.getElementById('workerSelect').value;
+
+    if (!trabajador || trabajador === '') {
+        tbody.innerHTML = '<tr><td colspan="7" class="fila-vacia">⚠️ Selecciona un VENDEDOR</td></tr>';
+        return;
+    }
+
+    if (recaudoData.length === 0) {
+        tbody.innerHTML = `
+            <tr class="fila-vacia"><td colspan="7">➕ Haz clic en "AGREGAR" o "CARGAR TRANSACCIONES DÍA"</td></tr>
+            <tr class="fila-vacia"><td colspan="7"></td></tr>
+            <tr class="fila-vacia"><td colspan="7"></td></tr>
+        `;
+        document.getElementById('filasCountRecaudo').textContent = '0';
+        return;
+    }
+
+    tbody.innerHTML = recaudoData.map((fila, index) => {
+        const esAprobado = fila.aprobado || false;
+        const btnAprobarClass = esAprobado ? 'btn-aprobar active' : 'btn-aprobar';
+        const btnRechazarClass = !esAprobado ? 'btn-rechazar active' : 'btn-rechazar';
+        const esManual = fila.esManual !== undefined ? fila.esManual : true;
+        const badgeOrigen = !esManual ? 
+            '<span class="badge-auto">📥 Auto</span>' : 
+            '<span class="badge-manual">📝 Manual</span>';
+        
+        const montoFormateado = formatearMontoVisual(fila.montoPagado);
+        
+        return `
+            <tr data-id="${fila.id}">
+                <td style="text-align: center; font-weight: 600; color: #666;">
+                    ${index + 1}
+                    <span style="display:block;">${badgeOrigen}</span>
+                </td>
+                <td><input type="date" class="fecha-cobro" value="${fila.fechaCobro}" data-id="${fila.id}" style="width:100%; padding:4px 6px; border:1px solid #ddd; border-radius:4px; font-size:12px;"></td>
+                <td>
+                    <div class="autocomplete-container">
+                        <input type="text" class="factura-input" placeholder="Buscar factura o CARTERA" 
+                               value="${escapeHtml(fila.factura)}" data-id="${fila.id}" 
+                               style="width:100%;" autocomplete="off">
+                        <div class="autocomplete-list"></div>
+                    </div>
+                </td>
+                <td>
+                    <div class="autocomplete-container">
+                        <input type="text" class="sii-go-input" placeholder="Buscar Núm. Factura SIIGO" 
+                               value="${escapeHtml(fila.numFacturaSIIGO || '')}" data-id="${fila.id}" 
+                               style="width:100%;" autocomplete="off">
+                        <div class="autocomplete-list"></div>
+                    </div>
+                </td>
+                <td>
+                    <div class="autocomplete-container">
+                        <input type="text" class="cliente-input" placeholder="Buscar cliente..." 
+                               value="${escapeHtml(fila.cliente)}" data-id="${fila.id}" 
+                               style="width:100%;" autocomplete="off">
+                        <div class="autocomplete-list"></div>
+                    </div>
+                </td>
+                <td>
+                    <div class="monto-wrapper">
+                        <span class="monto-simbolo">$</span>
+                        <input type="text" 
+                               class="monto-input" 
+                               value="${montoFormateado}" 
+                               data-id="${fila.id}" 
+                               data-valor-numerico="${fila.montoPagado || 0}"
+                               placeholder="0"
+                               autocomplete="off">
+                    </div>
+                </td>
+                <td>
+                    <div class="acciones-botones">
+                        <button class="${btnRechazarClass}" onclick="toggleAprobacion('recaudo', ${fila.id}, false)" title="Rechazar (Pendiente)">
+                            ✗
+                        </button>
+                        <button class="${btnAprobarClass}" onclick="toggleAprobacion('recaudo', ${fila.id}, true)" title="Aprobar">
+                            ✓
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+
+    const filasVisibles = recaudoData.length;
+    if (filasVisibles < 3) {
+        const vacias = 3 - filasVisibles;
+        for (let i = 0; i < vacias; i++) {
+            tbody.innerHTML += `
+                <tr class="fila-vacia">
+                    <td colspan="7" style="height: 38px;"></td>
+                </tr>
+            `;
+        }
+    }
+
+    configurarEventosRecaudo();
+    actualizarContadorFilas('recaudo');
+}
+
+function configurarEventosRecaudo() {
+    document.querySelectorAll('#recaudoBody .factura-input').forEach(input => {
+        input.addEventListener('input', function(e) {
+            const texto = this.value;
+            const resultados = buscarFacturasRecaudoLocal(texto);
+            mostrarAutocomplete(this, resultados, 'factura_recaudo');
+            actualizarCampoFila('recaudo', this.dataset.id, 'factura', this.value);
+            
+            if (!this.value.trim()) {
+                const rowId = this.dataset.id;
+                actualizarCampoFila('recaudo', rowId, 'numFacturaSIIGO', '');
+                const siiGoInput = document.querySelector(`#recaudoBody .sii-go-input[data-id="${rowId}"]`);
+                if (siiGoInput) siiGoInput.value = '';
+            }
+        });
+        input.addEventListener('blur', function(e) {
+            setTimeout(() => ocultarAutocomplete(this), 200);
+        });
+        input.addEventListener('click', function(e) {
+            const texto = this.value;
+            const resultados = buscarFacturasRecaudoLocal(texto);
+            if (resultados.length > 0) mostrarAutocomplete(this, resultados, 'factura_recaudo');
+        });
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') ocultarAutocomplete(this);
+        });
+    });
+
+    document.querySelectorAll('#recaudoBody .sii-go-input').forEach(input => {
+        input.addEventListener('input', function(e) {
+            const texto = this.value;
+            const resultados = buscarSIIGORecaudoLocal(texto);
+            mostrarAutocomplete(this, resultados, 'siigo_recaudo');
+            actualizarCampoFila('recaudo', this.dataset.id, 'numFacturaSIIGO', this.value);
+        });
+        input.addEventListener('blur', function(e) {
+            setTimeout(() => ocultarAutocomplete(this), 200);
+        });
+        input.addEventListener('click', function(e) {
+            const texto = this.value;
+            if (texto && texto.trim() !== '') {
+                const resultados = buscarSIIGORecaudoLocal(texto);
+                if (resultados.length > 0) {
+                    mostrarAutocomplete(this, resultados, 'siigo_recaudo');
+                }
+            } else {
+                const todosSIIGOs = recaudoSiigosList.slice(0, 20);
+                if (todosSIIGOs.length > 0) {
+                    mostrarAutocomplete(this, todosSIIGOs, 'siigo_recaudo');
+                }
+            }
+        });
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') ocultarAutocomplete(this);
+        });
+    });
+
+    document.querySelectorAll('#recaudoBody .cliente-input').forEach(input => {
+        input.addEventListener('input', function(e) {
+            const texto = this.value;
+            const resultados = buscarClientesRecaudoLocal(texto);
+            mostrarAutocomplete(this, resultados, 'cliente_recaudo');
+            actualizarCampoFila('recaudo', this.dataset.id, 'cliente', this.value);
+        });
+        input.addEventListener('blur', function(e) {
+            setTimeout(() => ocultarAutocomplete(this), 200);
+        });
+        input.addEventListener('click', function(e) {
+            const texto = this.value;
+            const resultados = buscarClientesRecaudoLocal(texto);
+            if (resultados.length > 0) mostrarAutocomplete(this, resultados, 'cliente_recaudo');
+        });
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') ocultarAutocomplete(this);
+        });
+    });
+
+    document.querySelectorAll('#recaudoBody .fecha-cobro').forEach(input => {
+        input.addEventListener('change', (e) => actualizarCampoFila('recaudo', e.target.dataset.id, 'fechaCobro', e.target.value));
+    });
+
+    document.querySelectorAll('#recaudoBody .monto-input').forEach(input => {
+        input.addEventListener('blur', function(e) {
+            const valor = obtenerValorNumerico(this);
+            const formateado = formatearMontoVisual(valor);
+            if (formateado) {
+                this.value = formateado;
+            } else {
+                this.value = '';
+            }
+            this.dataset.valorNumerico = valor;
+            actualizarCampoFila('recaudo', this.dataset.id, 'montoPagado', valor);
+            actualizarContadorFilas('recaudo');
+        });
+        input.addEventListener('input', function(e) {
+            const valor = this.value.replace(/[$,]/g, '');
+            if (valor === '' || /^\d*\.?\d*$/.test(valor)) {
+                const numVal = parseFloat(valor) || 0;
+                this.dataset.valorNumerico = numVal;
+                actualizarCampoFila('recaudo', this.dataset.id, 'montoPagado', numVal);
+            }
+        });
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                this.blur();
+            }
+            if (e.key === 'Escape') {
+                const valorNumerico = parseFloat(this.dataset.valorNumerico) || 0;
+                this.value = formatearMontoVisual(valorNumerico);
+                this.blur();
+            }
+        });
+        input.addEventListener('focus', function(e) {
+            this.select();
+        });
+    });
+}
+
+// ========================================================================
+//  📊 FUNCIONES DE TABLA - EGRESOS
+// ========================================================================
+
+function agregarFilaEgresos(data = null) {
+    const rowId = nextIdEgresos++;
+    const hoy = new Date().toISOString().split('T')[0];
+
+    const fila = {
+        id: rowId,
+        fecha: data?.fecha || hoy,
+        cuentaDebitoCodigo: data?.cuentaDebitoCodigo || '',
+        cuentaDebitoNombre: data?.cuentaDebitoNombre || '',
+        cuentaCreditoCodigo: data?.cuentaCreditoCodigo || '',
+        cuentaCreditoNombre: data?.cuentaCreditoNombre || '',
+        cod1: data?.cod1 || '',
+        cod2: data?.cod2 || '',
+        monto: data?.monto || 0,
+        descripcion: data?.descripcion || '',
+        aprobado: false,
+        tipoOperacion: 'EGRESO'
+    };
+
+    egresosData.push(fila);
+    renderizarEgresos();
+}
+
+function renderizarEgresos() {
+    const tbody = document.getElementById('egresosBody');
+
+    if (egresosData.length === 0) {
+        tbody.innerHTML = `
+            <tr class="fila-vacia"><td colspan="8">➕ Haz clic en "AGREGAR" para añadir un egreso</td></tr>
+            <tr class="fila-vacia"><td colspan="8"></td></tr>
+            <tr class="fila-vacia"><td colspan="8"></td></tr>
+        `;
+        document.getElementById('filasCountEgresos').textContent = '0';
+        return;
+    }
+
+    tbody.innerHTML = egresosData.map((fila, index) => {
+        const esAprobado = fila.aprobado || false;
+        const btnAprobarClass = esAprobado ? 'btn-aprobar active' : 'btn-aprobar';
+        const btnRechazarClass = !esAprobado ? 'btn-rechazar active' : 'btn-rechazar';
+        
+        const montoFormateado = formatearMontoVisual(fila.monto);
+        const debitoTexto = fila.cuentaDebitoCodigo ? `${fila.cuentaDebitoCodigo} - ${fila.cuentaDebitoNombre}` : '';
+        const creditoTexto = fila.cuentaCreditoCodigo ? `${fila.cuentaCreditoCodigo} - ${fila.cuentaCreditoNombre}` : '';
+        const descripcionEscapada = escapeHtml(fila.descripcion || '');
+        
+        return `
+            <tr data-id="${fila.id}">
+                <td style="text-align: center; font-weight: 600; color: #666;">${index + 1}</td>
+                <td><input type="date" class="fecha-egreso" value="${fila.fecha}" data-id="${fila.id}" style="width:100%; padding:4px 6px; border:1px solid #ddd; border-radius:4px; font-size:12px;"></td>
+                <td>
+                    <div class="autocomplete-container">
+                        <input type="text" class="cuenta-debito-input" placeholder="Buscar cuenta débito..." 
+                               value="${escapeHtml(debitoTexto)}" data-id="${fila.id}" data-tipo="debito"
+                               style="width:100%;" autocomplete="off">
+                        <div class="autocomplete-list"></div>
+                    </div>
+                </td>
+                <td>
+                    <div class="autocomplete-container">
+                        <input type="text" class="cod1-input" placeholder="Buscar COD_1..." 
+                               value="${escapeHtml(fila.cod1)}" data-id="${fila.id}"
+                               style="width:100%;" autocomplete="off">
+                        <div class="autocomplete-list"></div>
+                    </div>
+                </td>
+                <td>
+                    <div class="autocomplete-container">
+                        <input type="text" class="cod2-input" placeholder="Buscar COD_2..." 
+                               value="${escapeHtml(fila.cod2)}" data-id="${fila.id}"
+                               style="width:100%;" autocomplete="off">
+                        <div class="autocomplete-list"></div>
+                    </div>
+                </td>
+                <td>
+                    <div class="autocomplete-container">
+                        <input type="text" class="cuenta-credito-input" placeholder="Buscar cuenta crédito..." 
+                               value="${escapeHtml(creditoTexto)}" data-id="${fila.id}" data-tipo="credito"
+                               style="width:100%;" autocomplete="off">
+                        <div class="autocomplete-list"></div>
+                    </div>
+                </td>
+                <td>
+                    <div class="monto-wrapper">
+                        <span class="monto-simbolo">$</span>
+                        <input type="text" 
+                               class="monto-input" 
+                               value="${montoFormateado}" 
+                               data-id="${fila.id}" 
+                               data-valor-numerico="${fila.monto || 0}"
+                               placeholder="0"
+                               autocomplete="off">
+                    </div>
+                </td>
+                <td>
+                    <div class="acciones-botones">
+                        <button class="${btnRechazarClass}" onclick="toggleAprobacion('egresos', ${fila.id}, false)" title="Rechazar (Pendiente)">
+                            ✗
+                        </button>
+                        <button class="${btnAprobarClass}" onclick="toggleAprobacion('egresos', ${fila.id}, true)" title="Aprobar">
+                            ✓
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            <tr data-id="${fila.id}" class="fila-descripcion">
+                <td colspan="8">
+                    <div class="descripcion-wrapper">
+                        <span class="descripcion-label">📝 DESCRIPCIÓN:</span>
+                        <textarea class="descripcion-textarea" 
+                                  data-id="${fila.id}" 
+                                  placeholder="Escribe una descripción detallada del egreso..." 
+                                  rows="2">${descripcionEscapada}</textarea>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+
+    const filasVisibles = egresosData.length;
+    if (filasVisibles < 3) {
+        const vacias = 3 - filasVisibles;
+        for (let i = 0; i < vacias; i++) {
+            tbody.innerHTML += `
+                <tr class="fila-vacia">
+                    <td colspan="8" style="height: 38px;"></td>
+                </tr>
+            `;
+        }
+    }
+
+    configurarEventosEgresos();
+    actualizarContadorFilas('egresos');
+}
+
+function configurarEventosEgresos() {
+    document.querySelectorAll('#egresosBody .cuenta-debito-input').forEach(input => {
+        input.addEventListener('input', function(e) {
+            const texto = this.value;
+            const resultados = buscarCuentasCotilEgresosLocal(texto);
+            mostrarAutocomplete(this, resultados, 'cuenta_egreso');
+            if (resultados.length > 0 && resultados[0].codigo) {
+                actualizarCampoFila('egresos', this.dataset.id, 'cuentaDebitoCodigo', resultados[0].codigo);
+                actualizarCampoFila('egresos', this.dataset.id, 'cuentaDebitoNombre', resultados[0].nombre);
+            }
+        });
+        input.addEventListener('blur', function(e) {
+            setTimeout(() => ocultarAutocomplete(this), 200);
+        });
+        input.addEventListener('click', function(e) {
+            const texto = this.value;
+            const resultados = buscarCuentasCotilEgresosLocal(texto);
+            if (resultados.length > 0) mostrarAutocomplete(this, resultados, 'cuenta_egreso');
+        });
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') ocultarAutocomplete(this);
+        });
+    });
+
+    document.querySelectorAll('#egresosBody .cuenta-credito-input').forEach(input => {
+        input.addEventListener('input', function(e) {
+            const texto = this.value;
+            const resultados = buscarCuentasCotilEgresosLocal(texto);
+            mostrarAutocomplete(this, resultados, 'cuenta_egreso');
+            if (resultados.length > 0 && resultados[0].codigo) {
+                actualizarCampoFila('egresos', this.dataset.id, 'cuentaCreditoCodigo', resultados[0].codigo);
+                actualizarCampoFila('egresos', this.dataset.id, 'cuentaCreditoNombre', resultados[0].nombre);
+            }
+        });
+        input.addEventListener('blur', function(e) {
+            setTimeout(() => ocultarAutocomplete(this), 200);
+        });
+        input.addEventListener('click', function(e) {
+            const texto = this.value;
+            const resultados = buscarCuentasCotilEgresosLocal(texto);
+            if (resultados.length > 0) mostrarAutocomplete(this, resultados, 'cuenta_egreso');
+        });
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') ocultarAutocomplete(this);
+        });
+    });
+
+    document.querySelectorAll('#egresosBody .cod1-input').forEach(input => {
+        input.addEventListener('input', function(e) {
+            const texto = this.value;
+            const resultados = buscarCodigosEgresosLocal(texto);
+            mostrarAutocomplete(this, resultados, 'cod1_egreso');
+            actualizarCampoFila('egresos', this.dataset.id, 'cod1', this.value);
+        });
+        input.addEventListener('blur', function(e) {
+            setTimeout(() => ocultarAutocomplete(this), 200);
+        });
+        input.addEventListener('click', function(e) {
+            const texto = this.value;
+            const resultados = buscarCodigosEgresosLocal(texto);
+            if (resultados.length > 0) mostrarAutocomplete(this, resultados, 'cod1_egreso');
+        });
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') ocultarAutocomplete(this);
+        });
+    });
+
+    document.querySelectorAll('#egresosBody .cod2-input').forEach(input => {
+        input.addEventListener('input', function(e) {
+            const texto = this.value;
+            const resultados = buscarCodigosEgresosLocal(texto);
+            mostrarAutocomplete(this, resultados, 'cod2_egreso');
+            actualizarCampoFila('egresos', this.dataset.id, 'cod2', this.value);
+        });
+        input.addEventListener('blur', function(e) {
+            setTimeout(() => ocultarAutocomplete(this), 200);
+        });
+        input.addEventListener('click', function(e) {
+            const texto = this.value;
+            const resultados = buscarCodigosEgresosLocal(texto);
+            if (resultados.length > 0) mostrarAutocomplete(this, resultados, 'cod2_egreso');
+        });
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') ocultarAutocomplete(this);
+        });
+    });
+
+    document.querySelectorAll('#egresosBody .fecha-egreso').forEach(input => {
+        input.addEventListener('change', (e) => actualizarCampoFila('egresos', e.target.dataset.id, 'fecha', e.target.value));
+    });
+
+    document.querySelectorAll('#egresosBody .monto-input').forEach(input => {
+        input.addEventListener('blur', function(e) {
+            const valor = obtenerValorNumerico(this);
+            const formateado = formatearMontoVisual(valor);
+            if (formateado) {
+                this.value = formateado;
+            } else {
+                this.value = '';
+            }
+            this.dataset.valorNumerico = valor;
+            actualizarCampoFila('egresos', this.dataset.id, 'monto', valor);
+            actualizarContadorFilas('egresos');
+        });
+        input.addEventListener('input', function(e) {
+            const valor = this.value.replace(/[$,]/g, '');
+            if (valor === '' || /^\d*\.?\d*$/.test(valor)) {
+                const numVal = parseFloat(valor) || 0;
+                this.dataset.valorNumerico = numVal;
+                actualizarCampoFila('egresos', this.dataset.id, 'monto', numVal);
+            }
+        });
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                this.blur();
+            }
+            if (e.key === 'Escape') {
+                const valorNumerico = parseFloat(this.dataset.valorNumerico) || 0;
+                this.value = formatearMontoVisual(valorNumerico);
+                this.blur();
+            }
+        });
+        input.addEventListener('focus', function(e) {
+            this.select();
+        });
+    });
+
+    document.querySelectorAll('#egresosBody .descripcion-textarea').forEach(textarea => {
+        textarea.addEventListener('input', function(e) {
+            const rowId = this.dataset.id;
+            const valor = this.value;
+            actualizarCampoFila('egresos', rowId, 'descripcion', valor);
+        });
+        textarea.addEventListener('change', function(e) {
+            const rowId = this.dataset.id;
+            const valor = this.value;
+            actualizarCampoFila('egresos', rowId, 'descripcion', valor);
+        });
+        textarea.addEventListener('input', function(e) {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 80) + 'px';
+        });
+    });
+}
+
+// ========================================================================
+//  📊 FUNCIONES DE TABLA - COMPRA
+// ========================================================================
+
+function agregarFilaCompra(data = null) {
+    const rowId = nextIdCompra++;
+    const hoy = new Date().toISOString().split('T')[0];
+
+    const fila = {
+        id: rowId,
+        fecha: data?.fecha || hoy,
+        cuentaDebitoCodigo: data?.cuentaDebitoCodigo || '',
+        cuentaDebitoNombre: data?.cuentaDebitoNombre || '',
+        cuentaCreditoCodigo: data?.cuentaCreditoCodigo || '',
+        cuentaCreditoNombre: data?.cuentaCreditoNombre || '',
+        cod1: data?.cod1 || '',
+        cod2: data?.cod2 || '',
+        kilos: data?.kilos || 0,
+        valorUnitario: data?.valorUnitario || 0,
+        monto: 0,
+        descripcion: data?.descripcion || '',
+        aprobado: false,
+        tipoOperacion: 'COMPRA'
+    };
+
+    compraData.push(fila);
+    renderizarCompra();
+}
+
+function renderizarCompra() {
+    const tbody = document.getElementById('compraBody');
+
+    if (compraData.length === 0) {
+        tbody.innerHTML = `
+            <tr class="fila-vacia"><td colspan="10">➕ Haz clic en "AGREGAR" para añadir una compra</td></tr>
+            <tr class="fila-vacia"><td colspan="10"></td></tr>
+            <tr class="fila-vacia"><td colspan="10"></td></tr>
+        `;
+        document.getElementById('filasCountCompra').textContent = '0';
+        return;
+    }
+
+    tbody.innerHTML = compraData.map((fila, index) => {
+        const esAprobado = fila.aprobado || false;
+        const btnAprobarClass = esAprobado ? 'btn-aprobar active' : 'btn-aprobar';
+        const btnRechazarClass = !esAprobado ? 'btn-rechazar active' : 'btn-rechazar';
+        
+        const kilos = parseFloat(fila.kilos) || 0;
+        const valorUnitario = parseFloat(fila.valorUnitario) || 0;
+        const montoCalculado = kilos * valorUnitario;
+        if (fila.monto !== montoCalculado) {
+            fila.monto = montoCalculado;
+        }
+        
+        const montoFormateado = formatearMontoVisual(fila.monto);
+        const debitoTexto = fila.cuentaDebitoCodigo ? `${fila.cuentaDebitoCodigo} - ${fila.cuentaDebitoNombre}` : '';
+        const creditoTexto = fila.cuentaCreditoCodigo ? `${fila.cuentaCreditoCodigo} - ${fila.cuentaCreditoNombre}` : '';
+        const descripcionEscapada = escapeHtml(fila.descripcion || '');
+        
+        return `
+            <tr data-id="${fila.id}">
+                <td style="text-align: center; font-weight: 600; color: #666;">${index + 1}</td>
+                <td><input type="date" class="fecha-compra" value="${fila.fecha}" data-id="${fila.id}" style="width:100%; padding:4px 6px; border:1px solid #ddd; border-radius:4px; font-size:12px;"></td>
+                <td>
+                    <div class="autocomplete-container">
+                        <input type="text" class="cuenta-debito-compra-input" placeholder="Buscar cuenta débito..." 
+                               value="${escapeHtml(debitoTexto)}" data-id="${fila.id}" data-tipo="debito"
+                               style="width:100%;" autocomplete="off">
+                        <div class="autocomplete-list"></div>
+                    </div>
+                </td>
+                <td>
+                    <div class="autocomplete-container">
+                        <input type="text" class="cod1-compra-input" placeholder="Buscar COD_1..." 
+                               value="${escapeHtml(fila.cod1)}" data-id="${fila.id}"
+                               style="width:100%;" autocomplete="off">
+                        <div class="autocomplete-list"></div>
+                    </div>
+                </td>
+                <td>
+                    <div class="autocomplete-container">
+                        <input type="text" class="cod2-compra-input" placeholder="Buscar COD_2..." 
+                               value="${escapeHtml(fila.cod2)}" data-id="${fila.id}"
+                               style="width:100%;" autocomplete="off">
+                        <div class="autocomplete-list"></div>
+                    </div>
+                </td>
+                <td>
+                    <div class="autocomplete-container">
+                        <input type="text" class="cuenta-credito-compra-input" placeholder="Buscar cuenta crédito..." 
+                               value="${escapeHtml(creditoTexto)}" data-id="${fila.id}" data-tipo="credito"
+                               style="width:100%;" autocomplete="off">
+                        <div class="autocomplete-list"></div>
+                    </div>
+                </td>
+                <td>
+                    <input type="number" 
+                           class="kilos-compra-input" 
+                           value="${fila.kilos || 0}" 
+                           data-id="${fila.id}"
+                           step="0.01"
+                           min="0"
+                           style="width:100%; padding:4px 6px; border:1px solid #ddd; border-radius:4px; font-size:12px; text-align:right;">
+                </td>
+                <td>
+                    <input type="number" 
+                           class="valor-unitario-compra-input" 
+                           value="${fila.valorUnitario || 0}" 
+                           data-id="${fila.id}"
+                           step="0.01"
+                           min="0"
+                           style="width:100%; padding:4px 6px; border:1px solid #ddd; border-radius:4px; font-size:12px; text-align:right;">
+                </td>
+                <td>
+                    <div class="monto-wrapper">
+                        <span class="monto-simbolo">$</span>
+                        <input type="text" 
+                               class="monto-compra-input" 
+                               value="${montoFormateado}" 
+                               data-id="${fila.id}"
+                               readonly
+                               style="width:100%; padding:4px 6px 4px 22px; border:1px solid #ddd; border-radius:4px; font-size:12px; text-align:right; font-weight:600; background:#f5f5f5; color:#1a472a;">
+                    </div>
+                </td>
+                <td>
+                    <div class="acciones-botones">
+                        <button class="${btnRechazarClass}" onclick="toggleAprobacionCompra(${fila.id}, false)" title="Rechazar (Pendiente)">
+                            ✗
+                        </button>
+                        <button class="${btnAprobarClass}" onclick="toggleAprobacionCompra(${fila.id}, true)" title="Aprobar">
+                            ✓
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            <tr data-id="${fila.id}" class="fila-descripcion">
+                <td colspan="10">
+                    <div class="descripcion-wrapper">
+                        <span class="descripcion-label">📝 DESCRIPCIÓN:</span>
+                        <textarea class="descripcion-compra-textarea" 
+                                  data-id="${fila.id}" 
+                                  placeholder="Escribe una descripción detallada de la compra..." 
+                                  rows="2">${descripcionEscapada}</textarea>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+
+    const filasVisibles = compraData.length;
+    if (filasVisibles < 3) {
+        const vacias = 3 - filasVisibles;
+        for (let i = 0; i < vacias; i++) {
+            tbody.innerHTML += `
+                <tr class="fila-vacia">
+                    <td colspan="10" style="height: 38px;"></td>
+                </tr>
+            `;
+        }
+    }
+
+    configurarEventosCompra();
+    actualizarContadorFilasCompra();
+}
+
+function configurarEventosCompra() {
+    document.querySelectorAll('#compraBody .cuenta-debito-compra-input').forEach(input => {
+        input.addEventListener('input', function(e) {
+            const texto = this.value;
+            const resultados = buscarCuentasCotilCompraLocal(texto);
+            mostrarAutocomplete(this, resultados, 'cuenta_compra');
+            if (resultados.length > 0 && resultados[0].codigo) {
+                actualizarCampoFilaCompra(this.dataset.id, 'cuentaDebitoCodigo', resultados[0].codigo);
+                actualizarCampoFilaCompra(this.dataset.id, 'cuentaDebitoNombre', resultados[0].nombre);
+            }
+        });
+        input.addEventListener('blur', function(e) {
+            setTimeout(() => ocultarAutocomplete(this), 200);
+        });
+        input.addEventListener('click', function(e) {
+            const texto = this.value;
+            const resultados = buscarCuentasCotilCompraLocal(texto);
+            if (resultados.length > 0) mostrarAutocomplete(this, resultados, 'cuenta_compra');
+        });
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') ocultarAutocomplete(this);
+        });
+    });
+
+    document.querySelectorAll('#compraBody .cuenta-credito-compra-input').forEach(input => {
+        input.addEventListener('input', function(e) {
+            const texto = this.value;
+            const resultados = buscarCuentasCotilCompraLocal(texto);
+            mostrarAutocomplete(this, resultados, 'cuenta_compra');
+            if (resultados.length > 0 && resultados[0].codigo) {
+                actualizarCampoFilaCompra(this.dataset.id, 'cuentaCreditoCodigo', resultados[0].codigo);
+                actualizarCampoFilaCompra(this.dataset.id, 'cuentaCreditoNombre', resultados[0].nombre);
+            }
+        });
+        input.addEventListener('blur', function(e) {
+            setTimeout(() => ocultarAutocomplete(this), 200);
+        });
+        input.addEventListener('click', function(e) {
+            const texto = this.value;
+            const resultados = buscarCuentasCotilCompraLocal(texto);
+            if (resultados.length > 0) mostrarAutocomplete(this, resultados, 'cuenta_compra');
+        });
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') ocultarAutocomplete(this);
+        });
+    });
+
+    document.querySelectorAll('#compraBody .cod1-compra-input').forEach(input => {
+        input.addEventListener('input', function(e) {
+            const texto = this.value;
+            const resultados = buscarCodigosCompraLocal(texto);
+            mostrarAutocomplete(this, resultados, 'codigo_compra');
+            actualizarCampoFilaCompra(this.dataset.id, 'cod1', this.value);
+        });
+        input.addEventListener('blur', function(e) {
+            setTimeout(() => ocultarAutocomplete(this), 200);
+        });
+        input.addEventListener('click', function(e) {
+            const texto = this.value;
+            const resultados = buscarCodigosCompraLocal(texto);
+            if (resultados.length > 0) mostrarAutocomplete(this, resultados, 'codigo_compra');
+        });
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') ocultarAutocomplete(this);
+        });
+    });
+
+    document.querySelectorAll('#compraBody .cod2-compra-input').forEach(input => {
+        input.addEventListener('input', function(e) {
+            const texto = this.value;
+            const resultados = buscarCodigosCompraLocal(texto);
+            mostrarAutocomplete(this, resultados, 'codigo_compra');
+            actualizarCampoFilaCompra(this.dataset.id, 'cod2', this.value);
+        });
+        input.addEventListener('blur', function(e) {
+            setTimeout(() => ocultarAutocomplete(this), 200);
+        });
+        input.addEventListener('click', function(e) {
+            const texto = this.value;
+            const resultados = buscarCodigosCompraLocal(texto);
+            if (resultados.length > 0) mostrarAutocomplete(this, resultados, 'codigo_compra');
+        });
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') ocultarAutocomplete(this);
+        });
+    });
+
+    document.querySelectorAll('#compraBody .fecha-compra').forEach(input => {
+        input.addEventListener('change', (e) => {
+            actualizarCampoFilaCompra(e.target.dataset.id, 'fecha', e.target.value);
+        });
+    });
+
+    document.querySelectorAll('#compraBody .kilos-compra-input').forEach(input => {
+        input.addEventListener('input', function(e) {
+            const rowId = this.dataset.id;
+            const valor = parseFloat(this.value) || 0;
+            actualizarCampoFilaCompra(rowId, 'kilos', valor);
+            recalcularMontoCompra(rowId);
+        });
+        input.addEventListener('blur', function(e) {
+            const valor = parseFloat(this.value) || 0;
+            this.value = valor;
+            actualizarCampoFilaCompra(this.dataset.id, 'kilos', valor);
+        });
+    });
+
+    document.querySelectorAll('#compraBody .valor-unitario-compra-input').forEach(input => {
+        input.addEventListener('input', function(e) {
+            const rowId = this.dataset.id;
+            const valor = parseFloat(this.value) || 0;
+            actualizarCampoFilaCompra(rowId, 'valorUnitario', valor);
+            recalcularMontoCompra(rowId);
+        });
+        input.addEventListener('blur', function(e) {
+            const valor = parseFloat(this.value) || 0;
+            this.value = valor;
+            actualizarCampoFilaCompra(this.dataset.id, 'valorUnitario', valor);
+        });
+    });
+
+    document.querySelectorAll('#compraBody .descripcion-compra-textarea').forEach(textarea => {
+        textarea.addEventListener('input', function(e) {
+            const rowId = this.dataset.id;
+            actualizarCampoFilaCompra(rowId, 'descripcion', this.value);
+        });
+        textarea.addEventListener('change', function(e) {
+            const rowId = this.dataset.id;
+            actualizarCampoFilaCompra(rowId, 'descripcion', this.value);
+        });
+        textarea.addEventListener('input', function(e) {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 80) + 'px';
+        });
+    });
+}
+
+function recalcularMontoCompra(rowId) {
+    const fila = compraData.find(f => f.id == rowId);
+    if (!fila) return;
+    
+    const kilos = parseFloat(fila.kilos) || 0;
+    const valorUnitario = parseFloat(fila.valorUnitario) || 0;
+    const monto = kilos * valorUnitario;
+    fila.monto = monto;
+    
+    const montoInput = document.querySelector(`.monto-compra-input[data-id="${rowId}"]`);
+    if (montoInput) {
+        montoInput.value = formatearMontoVisual(monto);
+    }
+    
+    actualizarContadorFilasCompra();
+}
+
+function toggleAprobacionCompra(rowId, aprobar) {
+    const fila = compraData.find(f => f.id == rowId);
+    if (fila) {
+        fila.aprobado = aprobar;
+        renderizarCompra();
+    }
+}
+
+function actualizarCampoFilaCompra(rowId, campo, valor) {
+    const fila = compraData.find(f => f.id == rowId);
+    if (fila) {
+        fila[campo] = valor;
+    }
+}
+
+function actualizarContadorFilasCompra() {
+    const filasReales = compraData.filter(f => 
+        f.cuentaDebitoCodigo || f.cuentaCreditoCodigo || f.kilos > 0
+    );
+    const aprobadas = compraData.filter(f => f.aprobado).length;
+    document.getElementById('filasCountCompra').textContent = `${aprobadas}✅ / ${filasReales.length} total`;
+}
+
+// ========================================================================
+//  💾 GUARDAR APROBADOS COMPRA
+// ========================================================================
+
+async function guardarAprobadosCompra() {
+    const btnGuardar = document.getElementById('guardarCompraBtn');
+    const alertId = 'alertMessageCompra';
+    
+    if (btnGuardar.disabled) {
+        console.log('⏳ Ya hay un proceso de guardado en curso...');
+        mostrarAlerta('⏳ Ya hay un proceso de guardado en curso. Por favor espera...', 'info', alertId);
+        return;
+    }
+
+    const filasAprobadas = compraData.filter(f => f.aprobado === true);
+    const filasValidas = filasAprobadas.filter(f => {
+        if (!f.cuentaDebitoCodigo || f.cuentaDebitoCodigo.trim() === '') {
+            console.warn('⚠️ Fila sin cuenta débito:', f.id);
+            return false;
+        }
+        if (!f.cuentaCreditoCodigo || f.cuentaCreditoCodigo.trim() === '') {
+            console.warn('⚠️ Fila sin cuenta crédito:', f.id);
+            return false;
+        }
+        if (f.cuentaDebitoCodigo.trim() === f.cuentaCreditoCodigo.trim()) {
+            console.warn('⚠️ Fila con débito y crédito iguales:', f.id);
+            return false;
+        }
+        const kilos = parseFloat(f.kilos) || 0;
+        if (kilos <= 0) {
+            console.warn('⚠️ Fila con kilos inválido:', f.id, 'Kilos:', kilos);
+            return false;
+        }
+        const valorUnitario = parseFloat(f.valorUnitario) || 0;
+        if (valorUnitario <= 0) {
+            console.warn('⚠️ Fila con valor unitario inválido:', f.id, 'Valor:', valorUnitario);
+            return false;
+        }
+        return true;
+    });
+
+    if (filasValidas.length === 0) {
+        mostrarAlerta('No hay registros aprobados con datos válidos para guardar', 'error', alertId);
+        return;
+    }
+
+    if (filasAprobadas.length !== filasValidas.length) {
+        const invalidas = filasAprobadas.length - filasValidas.length;
+        mostrarAlerta(`⚠️ ${invalidas} filas aprobadas tienen datos incompletos y no se guardarán`, 'warning', alertId);
+    }
+
+    if (!confirm(`📋 ¿Guardar ${filasValidas.length} registros de compra?`)) {
+        return;
+    }
+
+    btnGuardar.disabled = true;
+    btnGuardar.textContent = `💾 GUARDANDO (${filasValidas.length})...`;
+    btnGuardar.classList.add('btn-guardando');
+    mostrarAlerta(`⏳ Guardando ${filasValidas.length} registros... Por favor espera`, 'info', alertId);
+
+    const registrosParaGuardar = filasValidas.map(fila => {
+        const kilos = parseFloat(fila.kilos) || 0;
+        const valorUnitario = parseFloat(fila.valorUnitario) || 0;
+        const monto = kilos * valorUnitario;
+        
+        return {
+            fechaCobro: fila.fecha || new Date().toISOString().split('T')[0],
+            trabajador: fila.cuentaDebitoNombre || '',
+            trabajadorCodigo: fila.cuentaDebitoCodigo || '',
+            factura: '',
+            cliente: fila.cuentaCreditoNombre || '',
+            clienteID: fila.cuentaCreditoCodigo || '',
+            montoPagado: monto,
+            observaciones: fila.descripcion || '',
+            origen: 'MANUAL',
+            numFacturaSIIGO: '',
+            tipoOperacion: 'COMPRA',
+            cod1: fila.cod1 || '',
+            cod2: fila.cod2 || '',
+            kilosCompra: kilos,
+            valorUnitCompra: valorUnitario
+        };
+    });
+
+    console.log('📋 Enviando ' + registrosParaGuardar.length + ' registros de COMPRA');
+    console.log('📋 Primer registro:', registrosParaGuardar[0]);
+
+    const resultado = await llamarAPI('guardarRegistros', { registros: registrosParaGuardar });
+    
+    btnGuardar.disabled = false;
+    btnGuardar.textContent = '💾 GUARDAR APROBADOS';
+    btnGuardar.classList.remove('btn-guardando');
+    
+    if (resultado.success && resultado.data) {
+        const data = resultado.data;
+        if (data.guardados > 0) {
+            const mensaje = `✅ ${data.guardados} registros de compra guardados correctamente`;
+            mostrarAlerta(mensaje, 'success', alertId);
+            
+            const idsAEliminar = filasValidas.map(f => f.id);
+            compraData = compraData.filter(f => !idsAEliminar.includes(f.id));
+            
+            if (data.errores > 0) {
+                console.warn('⚠️ Errores:', data.detalles.filter(d => d.error));
+                mostrarAlerta(`⚠️ ${data.errores} errores. Revisa consola (F12)`, 'warning', alertId);
+            }
+            
+            renderizarCompra();
+            actualizarEstadisticas();
+            
+            if (compraData.length === 0) {
+                for (let i = 0; i < 3; i++) {
+                    agregarFilaCompra();
+                }
+            }
+        } else {
+            mostrarAlerta('❌ Error: ' + (data.message || 'Error desconocido'), 'error', alertId);
+        }
+    } else {
+        mostrarAlerta('❌ Error: ' + (resultado.error || 'Error desconocido'), 'error', alertId);
+    }
+}
+
+// ========================================================================
+//  📋 FUNCIONES GENERALES
+// ========================================================================
+
+function toggleAprobacion(tipo, rowId, aprobar) {
+    let dataArray;
+    if (tipo === 'recaudo') {
+        dataArray = recaudoData;
+    } else if (tipo === 'egresos') {
+        dataArray = egresosData;
+    } else {
+        return;
+    }
+    
+    const fila = dataArray.find(f => f.id == rowId);
+    if (fila) {
+        fila.aprobado = aprobar;
+        if (tipo === 'recaudo') {
+            renderizarRecaudo();
+        } else {
+            renderizarEgresos();
+        }
+    }
+}
+
+function actualizarCampoFila(tipo, rowId, campo, valor) {
+    let dataArray;
+    if (tipo === 'recaudo') {
+        dataArray = recaudoData;
+    } else if (tipo === 'egresos') {
+        dataArray = egresosData;
+    } else {
+        return;
+    }
+    
+    const fila = dataArray.find(f => f.id == rowId);
+    if (fila) fila[campo] = valor;
+}
+
+function limpiarTabla(tipo) {
+    if (confirm('¿Eliminar todos los registros pendientes?')) {
+        if (tipo === 'RECAUDO') {
+            recaudoData = [];
+            nextIdRecaudo = 1;
+            renderizarRecaudo();
+            for (let i = 0; i < 3; i++) {
+                agregarFilaRecaudo();
+            }
+        } else if (tipo === 'EGRESO') {
+            egresosData = [];
+            nextIdEgresos = 1;
+            renderizarEgresos();
+            for (let i = 0; i < 3; i++) {
+                agregarFilaEgresos();
+            }
+        } else if (tipo === 'COMPRA') {
+            compraData = [];
+            nextIdCompra = 1;
+            renderizarCompra();
+            for (let i = 0; i < 3; i++) {
+                agregarFilaCompra();
+            }
+        }
+    }
+}
+
+function actualizarContadorFilas(tipo) {
+    let dataArray;
+    let contadorId;
+    if (tipo === 'recaudo') {
+        dataArray = recaudoData;
+        contadorId = 'filasCountRecaudo';
+    } else if (tipo === 'egresos') {
+        dataArray = egresosData;
+        contadorId = 'filasCountEgresos';
+    } else {
+        return;
+    }
+    
+    const filasReales = dataArray.filter(f => 
+        (tipo === 'recaudo' && (f.cliente || f.factura || f.montoPagado > 0)) ||
+        (tipo === 'egresos' && (f.cuentaDebitoCodigo || f.cuentaCreditoCodigo || f.monto > 0))
+    );
+    const aprobadas = dataArray.filter(f => f.aprobado).length;
+    
+    let texto = `${aprobadas}✅ / ${filasReales.length} total`;
+    document.getElementById(contadorId).textContent = texto;
+}
+
+// ========================================================================
+//  📥 CARGAR TRANSACCIONES DEL DÍA
+// ========================================================================
+
+async function cargarTransaccionesDia() {
+    const trabajador = document.getElementById('workerSelect').value;
+    
+    if (!trabajador || trabajador === '') {
+        mostrarAlerta('⚠️ Primero selecciona un VENDEDOR', 'error', 'alertMessageRecaudo');
+        return;
+    }
+
+    mostrarAlerta('⏳ Cargando transacciones del día...', 'info', 'alertMessageRecaudo');
+    
+    const resultado = await llamarAPI('cargarTransaccionesDia');
+    
+    if (!resultado.success) {
+        mostrarAlerta('❌ Error: ' + (resultado.error || resultado.message || 'Desconocido'), 'error', 'alertMessageRecaudo');
+        return;
+    }
+    
+    const data = resultado.data;
+    if (!data || data.length === 0) {
+        let mensaje = '📭 No hay transacciones nuevas para hoy';
+        if (resultado.omitidas && resultado.omitidas.length > 0) {
+            mensaje += ` (${resultado.omitidas.length} ya registradas)`;
+        }
+        mostrarAlerta(mensaje, 'info', 'alertMessageRecaudo');
+        return;
+    }
+    
+    let agregadas = 0;
+    data.forEach(trans => {
+        const existe = recaudoData.some(f => 
+            f.factura && f.factura.trim() === trans.factura.trim()
+        );
+        
+        if (existe) {
+            console.log('⚠️ Factura ya cargada:', trans.factura);
+            return;
+        }
+        
+        let ciudad = '';
+        if (trans.cliente) {
+            const clienteInfo = recaudoClientesList.find(c => 
+                c.nombre.toLowerCase() === trans.cliente.toLowerCase()
+            );
+            if (clienteInfo) {
+                ciudad = clienteInfo.ciudad || '';
+            }
+        }
+        
+        const fila = {
+            id: nextIdRecaudo++,
+            fechaCobro: trans.fecha || new Date().toISOString().split('T')[0],
+            factura: trans.factura || '',
+            numFacturaSIIGO: trans.numFacturaSIIGO || '',
+            cliente: trans.cliente || '',
+            clienteID: trans.clienteID || '',
+            ciudad: ciudad,
+            montoPagado: trans.monto || 0,
+            cod1: '',
+            cod2: '',
+            aprobado: false,
+            esManual: false,
+            tipoOperacion: 'RECAUDO'
+        };
+        
+        recaudoData.push(fila);
+        agregadas++;
+    });
+    
+    renderizarRecaudo();
+    
+    let mensaje = `✅ ${agregadas} transacciones cargadas del día de hoy`;
+    if (resultado.omitidas && resultado.omitidas.length > 0) {
+        mensaje += ` (${resultado.omitidas.length} ya registradas omitidas)`;
+    }
+    mostrarAlerta(mensaje, 'success', 'alertMessageRecaudo');
+    
+    if (agregadas > 0) {
+        mostrarAlerta(`📋 Revisa las ${agregadas} transacciones y usa ✅ para aprobar las que deseas guardar`, 'info', 'alertMessageRecaudo');
+    }
+}
+
+// ========================================================================
+//  💾 GUARDAR APROBADOS (RECAUDO Y EGRESOS)
+// ========================================================================
+
+async function guardarAprobados(tipo) {
+    let dataArray;
+    let btnId;
+    let alertId;
+    let contadorId;
+    
+    if (tipo === 'RECAUDO') {
+        dataArray = recaudoData;
+        btnId = 'guardarRecaudoBtn';
+        alertId = 'alertMessageRecaudo';
+        contadorId = 'filasCountRecaudo';
+    } else if (tipo === 'EGRESO') {
+        dataArray = egresosData;
+        btnId = 'guardarEgresosBtn';
+        alertId = 'alertMessageEgresos';
+        contadorId = 'filasCountEgresos';
+    } else {
+        return;
+    }
+    
+    const btnGuardar = document.getElementById(btnId);
+    
+    if (btnGuardar.disabled) {
+        console.log('⏳ Ya hay un proceso de guardado en curso...');
+        mostrarAlerta('⏳ Ya hay un proceso de guardado en curso. Por favor espera...', 'info', alertId);
+        return;
+    }
+
+    const trabajadorSeleccionado = document.getElementById('workerSelect').value;
+    if (tipo === 'RECAUDO' && (!trabajadorSeleccionado || trabajadorSeleccionado === '')) {
+        mostrarAlerta('Selecciona un VENDEDOR primero', 'error', alertId);
+        return;
+    }
+
+    const filasAprobadas = dataArray.filter(f => f.aprobado === true);
+
+    let filasValidas;
+    if (tipo === 'RECAUDO') {
+        filasValidas = filasAprobadas.filter(f => 
+            (f.cliente && f.cliente.trim() !== '') && 
+            (f.factura && f.factura.trim() !== '') && 
+            f.montoPagado > 0
+        );
+    } else {
+        filasValidas = filasAprobadas.filter(f => {
+            if (!f.cuentaDebitoCodigo || f.cuentaDebitoCodigo.trim() === '') {
+                console.warn('⚠️ Fila sin cuenta débito:', f.id);
+                return false;
+            }
+            if (!f.cuentaCreditoCodigo || f.cuentaCreditoCodigo.trim() === '') {
+                console.warn('⚠️ Fila sin cuenta crédito:', f.id);
+                return false;
+            }
+            if (f.cuentaDebitoCodigo.trim() === f.cuentaCreditoCodigo.trim()) {
+                console.warn('⚠️ Fila con débito y crédito iguales:', f.id);
+                return false;
+            }
+            const monto = parseFloat(f.monto) || 0;
+            if (monto <= 0) {
+                console.warn('⚠️ Fila con monto inválido:', f.id, 'Monto:', monto);
+                return false;
+            }
+            return true;
+        });
+    }
+
+    if (filasValidas.length === 0) {
+        mostrarAlerta('No hay registros aprobados con datos válidos para guardar', 'error', alertId);
+        return;
+    }
+
+    if (filasAprobadas.length !== filasValidas.length) {
+        const invalidas = filasAprobadas.length - filasValidas.length;
+        mostrarAlerta(`⚠️ ${invalidas} filas aprobadas tienen datos incompletos y no se guardarán`, 'warning', alertId);
+    }
+
+    if (!confirm(`📋 ¿Guardar ${filasValidas.length} registros?`)) {
+        return;
+    }
+
+    btnGuardar.disabled = true;
+    btnGuardar.textContent = `💾 GUARDANDO (${filasValidas.length})...`;
+    btnGuardar.classList.add('btn-guardando');
+    mostrarAlerta(`⏳ Guardando ${filasValidas.length} registros... Por favor espera`, 'info', alertId);
+
+    const trabajadorInfo = recaudoTrabajadoresList.find(t => t.nombre === trabajadorSeleccionado);
+    const codigoTrabajador = trabajadorInfo ? trabajadorInfo.codigo : '';
+
+    const registrosParaGuardar = filasValidas.map(fila => {
+        let registro = {};
+        
+        if (tipo === 'RECAUDO') {
+            registro = {
+                fechaCobro: fila.fechaCobro || new Date().toISOString().split('T')[0],
+                trabajador: trabajadorSeleccionado,
+                trabajadorCodigo: codigoTrabajador,
+                factura: fila.factura || '',
+                cliente: fila.cliente || '',
+                clienteID: fila.clienteID || '',
+                ciudad: fila.ciudad || '',
+                montoPagado: parseFloat(fila.montoPagado) || 0,
+                observaciones: fila.factura === 'CARTERA' ? 'Abono a cuenta - CARTERA' : '',
+                origen: fila.esManual === false ? 'AUTO' : 'MANUAL',
+                numFacturaSIIGO: fila.numFacturaSIIGO || '',
+                tipoOperacion: 'RECAUDO',
+                cod1: fila.cod1 || '',
+                cod2: fila.cod2 || ''
+            };
+        } else {
+            registro = {
+                fechaCobro: fila.fecha || new Date().toISOString().split('T')[0],
+                trabajador: fila.cuentaDebitoNombre || '',
+                trabajadorCodigo: fila.cuentaDebitoCodigo || '',
+                factura: '',
+                cliente: fila.cuentaCreditoNombre || '',
+                clienteID: fila.cuentaCreditoCodigo || '',
+                montoPagado: parseFloat(fila.monto) || 0,
+                observaciones: fila.descripcion || '',
+                origen: 'MANUAL',
+                numFacturaSIIGO: '',
+                tipoOperacion: 'EGRESO',
+                cod1: fila.cod1 || '',
+                cod2: fila.cod2 || ''
+            };
+        }
+        
+        return registro;
+    });
+
+    console.log('📋 Enviando ' + registrosParaGuardar.length + ' registros a guardar (tipo: ' + tipo + ')');
+    console.log('📋 Primer registro:', registrosParaGuardar[0]);
+
+    const resultado = await llamarAPI('guardarRegistros', { registros: registrosParaGuardar });
+    
+    btnGuardar.disabled = false;
+    btnGuardar.textContent = tipo === 'RECAUDO' ? '💾 GUARDAR APROBADOS' : '💾 GUARDAR APROBADOS';
+    btnGuardar.classList.remove('btn-guardando');
+    
+    if (resultado.success && resultado.data) {
+        const data = resultado.data;
+        if (data.guardados > 0) {
+            const mensaje = `✅ ${data.guardados} registros guardados correctamente`;
+            mostrarAlerta(mensaje, 'success', alertId);
+            
+            const idsAEliminar = filasValidas.map(f => f.id);
+            if (tipo === 'RECAUDO') {
+                recaudoData = recaudoData.filter(f => !idsAEliminar.includes(f.id));
+                renderizarRecaudo();
+            } else {
+                egresosData = egresosData.filter(f => !idsAEliminar.includes(f.id));
+                renderizarEgresos();
+            }
+            
+            if (data.errores > 0) {
+                console.warn('⚠️ Errores:', data.detalles.filter(d => d.error));
+                mostrarAlerta(`⚠️ ${data.errores} errores. Revisa consola (F12)`, 'warning', alertId);
+            }
+            
+            actualizarEstadisticas();
+            
+            if (tipo === 'RECAUDO' && recaudoData.length === 0) {
+                for (let i = 0; i < 3; i++) {
+                    agregarFilaRecaudo();
+                }
+            }
+            if (tipo === 'EGRESO' && egresosData.length === 0) {
+                for (let i = 0; i < 3; i++) {
+                    agregarFilaEgresos();
+                }
+            }
+        } else {
+            mostrarAlerta('❌ Error: ' + (data.message || 'Error desconocido'), 'error', alertId);
+        }
+    } else {
+        mostrarAlerta('❌ Error: ' + (resultado.error || 'Error desconocido'), 'error', alertId);
+    }
+}
+
+// ========================================================================
+//  📊 ESTADÍSTICAS
+// ========================================================================
+
+async function actualizarEstadisticas() {
+    const resultado = await llamarAPI('getEstadisticas');
+    
+    if (resultado.success && resultado.data) {
+        const stats = resultado.data;
+        document.getElementById('statTotalRegistros').textContent = stats.totalRegistros || 0;
+        document.getElementById('statTotalCobrado').textContent = formatearMonto(stats.totalCobrado);
+        document.getElementById('statTotalHoy').textContent = formatearMonto(stats.totalHoy);
+    } else {
+        console.error('Error al obtener estadísticas:', resultado.error);
+    }
+}
+
+// ========================================================================
+//  📋 FUNCIONES DEL MODAL HISTORIAL
+// ========================================================================
+
+function abrirModalHistorial() {
+    console.log('📋 Abriendo modal de historial...');
+    const modal = document.getElementById('modalHistorial');
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    
+    const hoy = new Date();
+    const hace30Dias = new Date();
+    hace30Dias.setDate(hoy.getDate() - 0);
+    
+    document.getElementById('histFechaDesde').value = hace30Dias.toISOString().split('T')[0];
+    document.getElementById('histFechaHasta').value = hoy.toISOString().split('T')[0];
+    
+    document.getElementById('histTipoFecha').value = 'FechaRegistro';
+    document.getElementById('histOrdenar').value = 'fecha';
+    document.getElementById('histOrden').value = 'desc';
+    document.getElementById('histTipoOperacion').value = '';
+    
+    cargarHistorial();
+}
+
+function cerrarModalHistorial() {
+    const modal = document.getElementById('modalHistorial');
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+async function cargarHistorial() {
+    console.log('🔄 Cargando historial con filtros...');
+    
+    document.getElementById('historialLoading').style.display = 'block';
+    document.getElementById('historialTableWrapper').style.display = 'none';
+    
+    const filtros = {
+        fechaDesde: document.getElementById('histFechaDesde').value || '',
+        fechaHasta: document.getElementById('histFechaHasta').value || '',
+        trabajador: document.getElementById('histTrabajador').value || '',
+        cliente: document.getElementById('histCliente').value || '',
+        factura: document.getElementById('histFactura').value || '',
+        estado: document.getElementById('histEstado').value || '',
+        tipoFecha: document.getElementById('histTipoFecha').value || 'FechaRegistro',
+        ordenarPor: document.getElementById('histOrdenar').value || 'fecha',
+        orden: document.getElementById('histOrden').value || 'desc',
+        tipoOperacion: document.getElementById('histTipoOperacion').value || ''
+    };
+    
+    console.log('📋 Filtros:', filtros);
+    
+    const resultado = await llamarAPI('getHistorial', { filtros: filtros });
+    
+    document.getElementById('historialLoading').style.display = 'none';
+    
+    if (!resultado.success) {
+        document.getElementById('historialTableWrapper').style.display = 'block';
+        document.getElementById('historialBody').innerHTML = `
+            <tr><td colspan="13" style="text-align:center; padding:30px; color:#dc3545;">
+                ❌ ${resultado.error || resultado.message || 'Error desconocido'}
+            </td></tr>
+        `;
+        return;
+    }
+    
+    const registros = resultado.data || [];
+    
+    if (registros.length === 0) {
+        document.getElementById('historialTableWrapper').style.display = 'block';
+        document.getElementById('historialBody').innerHTML = `
+            <tr><td colspan="13" style="text-align:center; padding:30px; color:#666;">
+                📭 No hay registros que coincidan con los filtros
+            </td></tr>
+        `;
+        actualizarEstadisticasHistorial(registros);
+        return;
+    }
+    
+    const registrosOrdenados = ordenarRegistros(registros, filtros);
+    
+    const tbody = document.getElementById('historialBody');
+    tbody.innerHTML = registrosOrdenados.map((reg, index) => {
+        const estadoClass = reg.estado === 'SALDADO' ? 'estado-saldado' : 'estado-pendiente';
+        let badgeEstado = reg.estado === 'SALDADO' ? '✅ SALDADO' : '⏳ PENDIENTE';
+        if (reg.estado === 'COMPLETADO') {
+            badgeEstado = '✅ COMPLETADO';
+        }
+        const badgeTipo = reg.tipoOperacion === 'EGRESO' ? '💸 EGRESO' : 
+                         reg.tipoOperacion === 'COMPRA' ? '🛒 COMPRA' : '📝 RECAUDO';
+        const monto = formatearMontoVisual(reg.montoPagado);
+        
+        const idEscapado = String(reg.id || '').replace(/'/g, "\\'");
+        const clienteEscapado = String(reg.cliente || '').replace(/'/g, "\\'");
+        const facturaEscapado = String(reg.factura || '').replace(/'/g, "\\'");
+        
+        const fechaMostrar = filtros.tipoFecha === 'FechaRegistro' 
+            ? (reg.fechaRegistro || reg.fechaCobro || '-')
+            : (reg.fechaCobro || reg.fechaRegistro || '-');
+        
+        const horaMostrar = reg.horaRegistro || '-';
+        
+        let debito = reg.trabajador || '-';
+        let credito = reg.cliente || '-';
+        if (reg.tipoOperacion === 'EGRESO' || reg.tipoOperacion === 'COMPRA') {
+            debito = reg.trabajador ? `${reg.trabajador} (${reg.trabajadorCodigo || ''})` : '-';
+            credito = reg.cliente ? `${reg.cliente} (${reg.clienteID || ''})` : '-';
+        }
+        
+        const kilos = reg.kilosCompra || 0;
+        const valorUnit = reg.valorUnitCompra || 0;
+        
+        return `
+            <tr>
+                <td style="text-align:center; font-weight:600; color:#666;">${index + 1}</td>
+                <td>
+                    <div style="font-weight:500;">${fechaMostrar}</div>
+                    <div style="font-size:10px; color:#999;">${horaMostrar}</div>
+                </td>
+                <td><span style="font-weight:600; ${reg.tipoOperacion === 'EGRESO' ? 'color:#dc3545;' : reg.tipoOperacion === 'COMPRA' ? 'color:#6f42c1;' : 'color:#1a472a;'}">${badgeTipo}</span></td>
+                <td style="font-size:12px;">${debito}</td>
+                <td style="font-size:12px;">${credito}</td>
+                <td>${reg.factura || '-'}</td>
+                <td style="font-size:11px;">${reg.numFacturaSIIGO || '-'}</td>
+                <td style="font-weight:600; color:#1a472a;">${monto}</td>
+                <td style="text-align:right;">${kilos > 0 ? kilos : '-'}</td>
+                <td style="text-align:right;">${valorUnit > 0 ? formatearMontoVisual(valorUnit) : '-'}</td>
+                <td><span class="${estadoClass}">${badgeEstado}</span></td>
+                <td style="text-align:center;">
+                    <button class="btn-ticket" 
+                            onclick="abrirTicket('${idEscapado}', '${facturaEscapado}', '${clienteEscapado}', '${reg.montoPagado}', '${reg.fechaCobro}', '${reg.trabajador}', '${reg.trabajadorCodigo}', '${reg.saldoAnterior}', '${reg.nuevoSaldo}', '${reg.estado}', '${reg.fechaRegistro}', '${reg.horaRegistro}', '${reg.observaciones}', '${reg.numFacturaSIIGO}', '${reg.cod1}', '${reg.cod2}', '${reg.tipoOperacion}')"
+                            title="Abrir ticket con datos del registro">
+                        🎫 TICKET
+                    </button>
+                </td>
+                <td style="text-align:center;">
+                    ${reg.tipoOperacion === 'RECAUDO' ? `
+                        <button class="btn-retornar" 
+                                onclick="solicitarRetornarAbono('${idEscapado}', '${clienteEscapado}', '${reg.montoPagado}', '${facturaEscapado}')" 
+                                title="Retornar abono al cliente">
+                            🔄 RETORNAR
+                        </button>
+                    ` : '<span style="color:#999; font-size:11px;">N/A</span>'}
+                </td>
+            </tr>
+        `;
+    }).join('');
+    
+    document.getElementById('historialTableWrapper').style.display = 'block';
+    actualizarEstadisticasHistorial(registrosOrdenados);
+    
+    console.log(`📊 ${registrosOrdenados.length} registros - Tipo Fecha: ${filtros.tipoFecha} - Ordenado por: ${filtros.ordenarPor} (${filtros.orden})`);
+}
+
+function abrirTicket(id, factura, cliente, monto, fechaCobro, trabajador, 
+                    trabajadorCodigo, saldoAnterior, nuevoSaldo, estado, 
+                    fechaRegistro, horaRegistro, observaciones, numFacturaSIIGO, 
+                    cod1, cod2, tipoOperacion) {
+    
+    console.log('🎫 Abriendo ticket con datos del registro:', { 
+        id, factura, cliente, monto, fechaCobro, trabajador, trabajadorCodigo, 
+        saldoAnterior, nuevoSaldo, estado, fechaRegistro, horaRegistro, 
+        observaciones, numFacturaSIIGO, cod1, cod2, tipoOperacion 
+    });
+    
+    if (!URL_SISTEMA_TICKETS || URL_SISTEMA_TICKETS === '') {
+        mostrarAlerta('⚠️ La URL del sistema de tickets no está configurada.', 'warning', 'alertMessageRecaudo');
+        return;
+    }
+    
+    let kilosCompra = 0;
+    let valorUnitCompra = 0;
+    let clienteID = '';
+    let ciudad = '';
+    
+    if (tipoOperacion === 'COMPRA') {
+        const filaCompra = compraData.find(f => String(f.id) === String(id));
+        if (filaCompra) {
+            kilosCompra = parseFloat(filaCompra.kilos) || 0;
+            valorUnitCompra = parseFloat(filaCompra.valorUnitario) || 0;
+        }
+    }
+    
+    if (tipoOperacion === 'RECAUDO') {
+        const filaRecaudo = recaudoData.find(f => String(f.id) === String(id));
+        if (filaRecaudo) {
+            clienteID = filaRecaudo.clienteID || '';
+            ciudad = filaRecaudo.ciudad || '';
+        }
+    }
+    
+    if (tipoOperacion === 'EGRESO') {
+        const filaEgreso = egresosData.find(f => String(f.id) === String(id));
+        if (filaEgreso) {
+            clienteID = filaEgreso.cuentaCreditoCodigo || '';
+        }
+    }
+    
+    const params = new URLSearchParams();
+    
+    params.append('id', id || '');
+    params.append('factura', factura || '');
+    params.append('cliente', cliente || '');
+    params.append('clienteID', clienteID || '');
+    params.append('ciudad', ciudad || '');
+    params.append('monto', monto || 0);
+    params.append('fechaCobro', fechaCobro || '');
+    params.append('trabajador', trabajador || '');
+    params.append('trabajadorCodigo', trabajadorCodigo || '');
+    params.append('saldoAnterior', saldoAnterior || 0);
+    params.append('nuevoSaldo', nuevoSaldo || 0);
+    params.append('estado', estado || 'PENDIENTE');
+    params.append('fechaRegistro', fechaRegistro || '');
+    params.append('horaRegistro', horaRegistro || '');
+    params.append('observaciones', observaciones || '');
+    params.append('numFacturaSIIGO', numFacturaSIIGO || '');
+    params.append('cod1', cod1 || '');
+    params.append('cod2', cod2 || '');
+    params.append('tipoOperacion', tipoOperacion || 'RECAUDO');
+    
+    if (tipoOperacion === 'COMPRA') {
+        params.append('kilosCompra', kilosCompra);
+        params.append('valorUnitCompra', valorUnitCompra);
+    }
+    
+    const urlCompleta = URL_SISTEMA_TICKETS + '?' + params.toString();
+    
+    console.log('📤 Enviando ticket a:', urlCompleta);
+    
+    const ancho = 800;
+    const alto = 600;
+    const izquierda = (screen.width - ancho) / 2;
+    const arriba = (screen.height - alto) / 2;
+    
+    const ventana = window.open(
+        urlCompleta,
+        'Ticket_' + id,
+        `width=${ancho},height=${alto},top=${arriba},left=${izquierda},resizable=yes,scrollbars=yes`
+    );
+    
+    if (ventana) {
+        ventana.focus();
+        mostrarAlerta('🎫 Ticket enviado al sistema de tickets', 'info', 'alertMessageRecaudo');
+    } else {
+        mostrarAlerta('⚠️ Permite ventanas emergentes para abrir el ticket', 'warning', 'alertMessageRecaudo');
+    }
+}
+
+function ordenarRegistros(registros, filtros) {
+    const ordenarPor = filtros.ordenarPor || 'fecha';
+    const orden = filtros.orden || 'desc';
+    const tipoFecha = filtros.tipoFecha || 'FechaRegistro';
+    
+    return [...registros].sort((a, b) => {
+        let valorA, valorB;
+        
+        switch(ordenarPor) {
+            case 'factura':
+                valorA = (a.factura || '').toString().toLowerCase();
+                valorB = (b.factura || '').toString().toLowerCase();
+                break;
+            case 'hora':
+                valorA = a.horaRegistro || '00:00:00';
+                valorB = b.horaRegistro || '00:00:00';
+                break;
+            case 'fecha':
+            default:
+                valorA = tipoFecha === 'FechaRegistro' 
+                    ? (a.fechaRegistro || a.fechaCobro || '')
+                    : (a.fechaCobro || a.fechaRegistro || '');
+                valorB = tipoFecha === 'FechaRegistro'
+                    ? (b.fechaRegistro || b.fechaCobro || '')
+                    : (b.fechaCobro || b.fechaRegistro || '');
+                break;
+        }
+        
+        if (ordenarPor === 'fecha') {
+            if (valorA < valorB) return orden === 'asc' ? -1 : 1;
+            if (valorA > valorB) return orden === 'asc' ? 1 : -1;
+            return 0;
+        } else {
+            if (valorA < valorB) return orden === 'asc' ? -1 : 1;
+            if (valorA > valorB) return orden === 'asc' ? 1 : -1;
+            return 0;
+        }
+    });
+}
+
+function actualizarEstadisticasHistorial(registros) {
+    let totalCobrado = 0;
+    let totalSaldado = 0;
+    let totalPendiente = 0;
+    
+    registros.forEach(r => {
+        if (r.tipoOperacion === 'EGRESO' || r.tipoOperacion === 'COMPRA') return;
+        
+        totalCobrado += r.montoPagado;
+        if (r.estado === 'SALDADO' || r.estado === 'COMPLETADO') {
+            totalSaldado += r.montoPagado;
+        } else {
+            totalPendiente += r.montoPagado;
+        }
+    });
+    
+    document.getElementById('histTotalRegistros').textContent = registros.length;
+    document.getElementById('histTotalCobrado').textContent = formatearMonto(totalCobrado);
+    document.getElementById('histTotalSaldado').textContent = formatearMonto(totalSaldado);
+    document.getElementById('histTotalPendiente').textContent = formatearMonto(totalPendiente);
+}
+
+function limpiarFiltrosHistorial() {
+    document.getElementById('histFechaDesde').value = '';
+    document.getElementById('histFechaHasta').value = '';
+    document.getElementById('histTrabajador').value = '';
+    document.getElementById('histCliente').value = '';
+    document.getElementById('histFactura').value = '';
+    document.getElementById('histEstado').value = '';
+    document.getElementById('histTipoOperacion').value = '';
+    document.getElementById('histTipoFecha').value = 'FechaRegistro';
+    document.getElementById('histOrdenar').value = 'fecha';
+    document.getElementById('histOrden').value = 'desc';
+    
+    cargarHistorial();
+}
+
+// ========================================================================
+//  🔄 SISTEMA DE ELIMINACIÓN DE ABONOS
+// ========================================================================
+
+function solicitarRetornarAbono(idAbono, cliente, monto, factura) {
+    console.log('🔑 Solicitando eliminar abono:', { idAbono, cliente, monto, factura });
+    
+    if (!idAbono || idAbono === 'undefined' || idAbono === 'null' || idAbono === '') {
+        mostrarAlerta('❌ Error: ID de abono no válido', 'error', 'alertMessageRecaudo');
+        return;
+    }
+    
+    window.abonoAEliminar = {
+        id: idAbono,
+        cliente: cliente || 'Cliente no especificado',
+        monto: monto || 0,
+        factura: factura || 'Sin factura'
+    };
+    
+    mostrarModalEliminarAbono();
+}
+
+function mostrarModalEliminarAbono() {
+    const data = window.abonoAEliminar;
+    if (!data) {
+        mostrarAlerta('❌ Error: No hay datos del abono', 'error', 'alertMessageRecaudo');
+        return;
+    }
+    
+    const montoFormateado = formatearMontoVisual(parseFloat(data.monto));
+    const clienteEscapado = escapeHtml(data.cliente);
+    const facturaEscapado = escapeHtml(data.factura);
+    
+    const modalHtml = `
+        <div id="modalEliminarAbono" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:100000; display:flex; align-items:center; justify-content:center; padding:16px; animation:fadeIn 0.3s;">
+            <div style="background:white; border-radius:16px; max-width:550px; width:100%; max-height:95vh; display:flex; flex-direction:column; box-shadow:0 25px 80px rgba(0,0,0,0.5);">
+                <div style="padding:16px 24px; background:linear-gradient(135deg, #dc3545 0%, #a71d2a 100%); color:white; border-radius:16px 16px 0 0; display:flex; justify-content:space-between; align-items:center; flex-shrink:0;">
+                    <h2 style="font-size:18px; font-weight:700; margin:0; display:flex; align-items:center; gap:10px;">
+                        <span>🔄</span> RETORNAR ABONO
+                    </h2>
+                    <button onclick="cerrarModalEliminarAbono()" 
+                            style="background:rgba(255,255,255,0.2); border:none; color:white; font-size:24px; cursor:pointer; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:all 0.2s;">
+                        ✕
+                    </button>
+                </div>
+                
+                <div style="padding:20px 24px; overflow-y:auto; flex:1;">
+                    <div style="background:#fff3cd; padding:14px; border-radius:10px; margin-bottom:16px; border-left:4px solid #ffc107;">
+                        <p style="margin:0; font-weight:700; color:#856404; font-size:14px;">⚠️ ADVERTENCIA</p>
+                        <p style="margin:5px 0 0 0; font-size:13px; color:#856404; line-height:1.5;">
+                            Esta acción ELIMINARÁ el abono y DEVOLVERÁ el saldo al cliente.
+                            Se registrará en auditoría. Esta acción <strong>NO se puede deshacer</strong>.
+                        </p>
+                    </div>
+                    
+                    <div style="background:#f8f9fa; padding:14px; border-radius:10px; margin-bottom:16px; border:1px solid #e9ecef;">
+                        <div style="display:grid; grid-template-columns:auto 1fr; gap:4px 12px;">
+                            <span style="font-weight:600; color:#495057;">📄 Factura:</span>
+                            <span style="color:#212529;">${facturaEscapado}</span>
+                            
+                            <span style="font-weight:600; color:#495057;">👤 Cliente:</span>
+                            <span style="color:#212529;">${clienteEscapado}</span>
+                            
+                            <span style="font-weight:600; color:#495057;">💰 Monto:</span>
+                            <span style="color:#dc3545; font-weight:700; font-size:16px;">${montoFormateado}</span>
+                            
+                            <span style="font-weight:600; color:#495057; font-size:11px;">🆔 ID:</span>
+                            <span style="color:#6c757d; font-size:11px; font-family:monospace;">${data.id}</span>
+                        </div>
+                    </div>
+                    
+                    <div id="claveMensajeAreaAbono" style="margin-bottom:12px; min-height:24px;"></div>
+                    
+                    <button id="btnEnviarClaveAbono" onclick="enviarClaveEliminarAbono()" 
+                            style="width:100%; background:#0d6efd; color:white; border:none; padding:12px; border-radius:10px; font-weight:700; cursor:pointer; font-size:14px; margin-bottom:12px; transition:all 0.2s;">
+                        📧 ENVIAR CLAVE DE AUTORIZACIÓN
+                    </button>
+                    
+                    <div style="position:relative; margin:12px 0;">
+                        <div style="position:absolute; inset:0; display:flex; align-items:center;">
+                            <div style="width:100%; border-top:1px solid #dee2e6;"></div>
+                        </div>
+                        <div style="position:relative; display:flex; justify-content:center;">
+                            <span style="padding:0 12px; background:white; color:#6c757d; font-size:12px;">O ingresa la clave recibida</span>
+                        </div>
+                    </div>
+                    
+                    <input type="text" id="claveAbonoInput" 
+                           placeholder="Clave de 6 dígitos" 
+                           style="width:100%; border:2px solid #dee2e6; border-radius:10px; padding:14px; text-align:center; font-size:28px; letter-spacing:10px; text-transform:uppercase; margin-bottom:14px; font-weight:700; transition:border-color 0.3s;"
+                           maxlength="6" autocomplete="off" 
+                           onfocus="this.style.borderColor='#0d6efd';" 
+                           onblur="this.style.borderColor='#dee2e6';">
+                    
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <button onclick="validarClaveEliminarAbono()" 
+                                style="flex:1; background:#28a745; color:white; border:none; padding:12px; border-radius:10px; font-weight:700; cursor:pointer; min-width:70px; transition:all 0.2s; font-size:13px;">
+                            ✅ ELIMINAR
+                        </button>
+                        <button onclick="diagnosticarClaveAbono()" 
+                                style="flex:1; background:#fd7e14; color:white; border:none; padding:12px; border-radius:10px; font-weight:700; cursor:pointer; min-width:70px; transition:all 0.2s; font-size:13px;">
+                            🔍 DIAGNOSTICAR
+                        </button>
+                        <button onclick="cerrarModalEliminarAbono()" 
+                                style="flex:1; background:#6c757d; color:white; border:none; padding:12px; border-radius:10px; font-weight:700; cursor:pointer; min-width:70px; transition:all 0.2s; font-size:13px;">
+                            ✕ CERRAR
+                        </button>
+                    </div>
+                    
+                    <div id="diagnosticoAreaAbono" style="margin-top:16px; display:none;">
+                        <div style="border-top:2px solid #dee2e6; padding-top:14px;">
+                            <h4 style="margin:0 0 10px 0; color:#fd7e14; font-size:14px;">🔍 DIAGNÓSTICO</h4>
+                            <div id="diagnosticoContenidoAbono" style="background:#f8f9fa; border-radius:10px; padding:14px; font-size:12px; font-family:monospace; max-height:300px; overflow:auto; border:1px solid #e9ecef;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="padding:12px 24px; background:#f8f9fa; border-top:1px solid #e9ecef; border-radius:0 0 16px 16px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0;">
+                    <div style="font-size:12px; color:#6c757d;">
+                        ⏰ Clave válida por <strong>20 minutos</strong>
+                    </div>
+                    <button onclick="cerrarModalEliminarAbono()" 
+                            style="padding:8px 20px; background:#6c757d; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:600; font-size:12px; transition:all 0.2s;">
+                        CERRAR
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    const existingModal = document.getElementById('modalEliminarAbono');
+    if (existingModal) existingModal.remove();
+    
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    setTimeout(() => {
+        const input = document.getElementById('claveAbonoInput');
+        if (input) input.focus();
+    }, 300);
+    
+    console.log('✅ Modal de eliminación de abono mostrado');
+}
+
+async function enviarClaveEliminarAbono() {
+    const data = window.abonoAEliminar;
+    if (!data) {
+        mostrarAlerta('Error: No hay abono seleccionado', 'error', 'alertMessageRecaudo');
+        return;
+    }
+    
+    const btn = document.getElementById('btnEnviarClaveAbono');
+    const mensajeArea = document.getElementById('claveMensajeAreaAbono');
+    
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> Enviando...';
+    }
+    if (mensajeArea) mensajeArea.innerHTML = '<p style="color:#0d6efd; margin:0;">📧 Enviando clave al correo...</p>';
+    
+    const resultado = await llamarAPI('solicitarClaveEliminar', {
+        idAbono: data.id,
+        clienteNombre: data.cliente,
+        monto: data.monto,
+        factura: data.factura
+    });
+    
+    if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '📧 ENVIAR CLAVE DE AUTORIZACIÓN';
+    }
+    
+    if (resultado.success) {
+        if (mensajeArea) {
+            mensajeArea.innerHTML = '<p style="color:#28a745; margin:0;">✅ Clave enviada. Revisa tu correo. Válida por 20 minutos.</p>';
+        }
+        mostrarAlerta('✅ Clave enviada al correo', 'success', 'alertMessageRecaudo');
+        
+        if (!document.getElementById('btnReenviarClaveAbono')) {
+            btn?.insertAdjacentHTML('afterend', `
+                <button id="btnReenviarClaveAbono" onclick="reenviarClaveEliminarAbono()" 
+                        style="width:100%; background:#6c757d; color:white; border:none; padding:10px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:13px; margin-top:8px; transition:all 0.2s;">
+                    🔄 Reenviar Clave
+                </button>
+            `);
+        }
+    } else {
+        const errorMsg = resultado?.error || 'Error desconocido';
+        if (mensajeArea) mensajeArea.innerHTML = `<p style="color:#dc3545; margin:0;">❌ Error: ${errorMsg}</p>`;
+        mostrarAlerta('Error: ' + errorMsg, 'error', 'alertMessageRecaudo');
+    }
+}
+
+async function reenviarClaveEliminarAbono() {
+    const data = window.abonoAEliminar;
+    if (!data) return;
+    
+    const mensajeArea = document.getElementById('claveMensajeAreaAbono');
+    if (mensajeArea) mensajeArea.innerHTML = '<p style="color:#0d6efd; margin:0;">📧 Reenviando clave...</p>';
+    
+    const resultado = await llamarAPI('reenviarClave', { idAbono: data.id });
+    
+    if (resultado.success) {
+        if (mensajeArea) mensajeArea.innerHTML = '<p style="color:#28a745; margin:0;">✅ Clave reenviada. Revisa tu correo.</p>';
+        mostrarAlerta('✅ Clave reenviada', 'success', 'alertMessageRecaudo');
+    } else {
+        const errorMsg = resultado?.error || 'Error desconocido';
+        if (mensajeArea) mensajeArea.innerHTML = `<p style="color:#dc3545; margin:0;">❌ Error: ${errorMsg}</p>`;
+        mostrarAlerta('Error: ' + errorMsg, 'error', 'alertMessageRecaudo');
+    }
+}
+
+async function diagnosticarClaveAbono() {
+    const claveInput = document.getElementById('claveAbonoInput');
+    const clave = claveInput?.value.trim().toUpperCase();
+    
+    if (!clave || clave.length !== 6) {
+        mostrarAlerta('Ingresa una clave válida de 6 caracteres para diagnosticar', 'error', 'alertMessageRecaudo');
+        return;
+    }
+    
+    const data = window.abonoAEliminar;
+    if (!data) {
+        mostrarAlerta('Error: No hay abono seleccionado', 'error', 'alertMessageRecaudo');
+        return;
+    }
+    
+    const btnDiagnostico = document.querySelector('#modalEliminarAbono button:nth-child(2)');
+    if (btnDiagnostico) {
+        btnDiagnostico.disabled = true;
+        btnDiagnostico.innerHTML = '<span class="spinner"></span> Diagnosticando...';
+    }
+    mostrarAlerta('🔍 Ejecutando diagnóstico...', 'info', 'alertMessageRecaudo');
+    
+    const resultado = await llamarAPI('diagnosticarClave', {
+        idAbono: data.id,
+        clave: clave
+    });
+    
+    if (btnDiagnostico) {
+        btnDiagnostico.disabled = false;
+        btnDiagnostico.innerHTML = '🔍 DIAGNOSTICAR';
+    }
+    
+    if (resultado.success) {
+        mostrarDiagnosticoAbono(resultado.data);
+    } else {
+        mostrarAlerta('Error al ejecutar diagnóstico: ' + (resultado.error || 'Desconocido'), 'error', 'alertMessageRecaudo');
+    }
+}
+
+function mostrarDiagnosticoAbono(diagnostico) {
+    const area = document.getElementById('diagnosticoAreaAbono');
+    const contenido = document.getElementById('diagnosticoContenidoAbono');
+    if (!area || !contenido) return;
+    
+    let colorConclusion = 'color:#212529;';
+    if (diagnostico.conclusion?.includes('✅')) colorConclusion = 'color:#28a745;';
+    else if (diagnostico.conclusion?.includes('❌')) colorConclusion = 'color:#dc3545;';
+    else if (diagnostico.conclusion?.includes('⏰')) colorConclusion = 'color:#fd7e14;';
+    
+    let html = `
+        <div style="margin-bottom:12px; padding:10px; border-radius:6px; ${diagnostico.conclusion?.includes('✅') ? 'background:#d4edda;' : 'background:#f8f9fa;'}">
+            <p style="margin:0; font-weight:bold; ${colorConclusion}">${diagnostico.conclusion || 'Sin conclusión'}</p>
+            <p style="margin:2px 0 0 0; color:#6c757d; font-size:11px;">ID Abono: ${diagnostico.idAbono}</p>
+            <p style="margin:0; color:#6c757d; font-size:11px;">Clave ingresada: "${diagnostico.claveIngresada}"</p>
+        </div>
+        <table style="width:100%; border-collapse:collapse; font-size:11px;">
+            <thead>
+                <tr style="background:#e9ecef;">
+                    <th style="padding:4px 8px; border:1px solid #dee2e6; text-align:left;">Paso</th>
+                    <th style="padding:4px 8px; border:1px solid #dee2e6; text-align:left;">Prueba</th>
+                    <th style="padding:4px 8px; border:1px solid #dee2e6; text-align:left;">Resultado</th>
+                    <th style="padding:4px 8px; border:1px solid #dee2e6; text-align:left;">Detalles</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    for (const paso of diagnostico.pasos || []) {
+        let resultadoClass = '';
+        if (paso.resultado === 'COINCIDEN') resultadoClass = 'color:#28a745; font-weight:bold;';
+        else if (paso.resultado === 'NO COINCIDEN') resultadoClass = 'color:#dc3545; font-weight:bold;';
+        else if (paso.resultado === 'ENCONTRADO') resultadoClass = 'color:#28a745;';
+        else if (paso.resultado === 'NO ENCONTRADO') resultadoClass = 'color:#dc3545;';
+        else if (paso.resultado === 'EXPIRADA') resultadoClass = 'color:#fd7e14; font-weight:bold;';
+        else if (paso.resultado === 'VÁLIDA (dentro del tiempo)') resultadoClass = 'color:#28a745;';
+        
+        html += `<tr>
+            <td style="padding:4px 8px; border:1px solid #dee2e6;">${paso.paso}</td>
+            <td style="padding:4px 8px; border:1px solid #dee2e6; font-weight:500;">${paso.nombre}</td>
+            <td style="padding:4px 8px; border:1px solid #dee2e6; ${resultadoClass}">${paso.resultado}</td>
+            <td style="padding:4px 8px; border:1px solid #dee2e6; color:#6c757d;">${paso.detalles || ''}</td>
+        </tr>`;
+    }
+    
+    html += `</tbody></table>`;
+    contenido.innerHTML = html;
+    area.style.display = 'block';
+    area.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+async function validarClaveEliminarAbono() {
+    const claveInput = document.getElementById('claveAbonoInput');
+    const clave = claveInput?.value.trim().toUpperCase();
+    
+    if (!clave || clave.length !== 6) {
+        mostrarAlerta('Ingresa una clave válida de 6 caracteres', 'error', 'alertMessageRecaudo');
+        return;
+    }
+    
+    const data = window.abonoAEliminar;
+    if (!data) {
+        mostrarAlerta('Error: No hay abono seleccionado', 'error', 'alertMessageRecaudo');
+        return;
+    }
+    
+    const btnValidar = document.querySelector('#modalEliminarAbono button:first-of-type');
+    if (btnValidar) {
+        btnValidar.disabled = true;
+        btnValidar.innerHTML = '<span class="spinner"></span> Validando...';
+    }
+    mostrarAlerta('🔍 Validando clave y eliminando abono...', 'info', 'alertMessageRecaudo');
+    
+    const resultado = await llamarAPI('eliminarAbono', {
+        idAbono: data.id,
+        clave: clave
+    });
+    
+    if (btnValidar) {
+        btnValidar.disabled = false;
+        btnValidar.innerHTML = '✅ ELIMINAR';
+    }
+    
+    if (resultado.success) {
+        mostrarAlerta('✅ ' + (resultado.data?.mensaje || 'Abono eliminado correctamente'), 'success', 'alertMessageRecaudo');
+        cerrarModalEliminarAbono();
+        cargarHistorial();
+        actualizarEstadisticas();
+    } else {
+        const errorMsg = resultado?.error || 'Error al eliminar';
+        mostrarAlerta('❌ ' + errorMsg, 'error', 'alertMessageRecaudo');
+        document.getElementById('claveAbonoInput')?.focus();
+        
+        if (confirm('¿Deseas ejecutar un diagnóstico para ver por qué falló?')) {
+            diagnosticarClaveAbono();
+        }
+    }
+}
+
+function cerrarModalEliminarAbono() {
+    const modal = document.getElementById('modalEliminarAbono');
+    if (modal) modal.remove();
+    window.abonoAEliminar = null;
+}
+
+// ========================================================================
+//  🩺 FUNCIONES DE DIAGNÓSTICO
+// ========================================================================
+
+async function diagnosticarCompletoHTML() {
+    console.log('🔍 ===== INICIANDO DIAGNÓSTICO DESDE HTML =====');
+    
+    mostrarAlerta('⏳ Ejecutando diagnóstico completo...', 'info', 'alertMessageRecaudo');
+    
+    const resultado = await llamarAPI('diagnosticar');
+    
+    console.log('📊 ===== RESULTADO DEL DIAGNÓSTICO =====');
+    console.log('📋 Resultado completo:', JSON.stringify(resultado, null, 2));
+    
+    if (resultado.success && resultado.data) {
+        const data = resultado.data;
+        let reporte = '🔍 DIAGNÓSTICO COMPLETO\n';
+        reporte += '═'.repeat(50) + '\n';
+        reporte += `📅 Timestamp: ${data.timestamp || new Date().toISOString()}\n`;
+        reporte += `📋 Spreadsheet ID: ${data.spreadsheetId || 'N/A'}\n`;
+        reporte += `📋 Hoja: ${data.sheetName || 'N/A'}\n\n`;
+        
+        const prueba1 = data.pruebas?.hojaRegistros || {};
+        reporte += '📋 PRUEBA 1: Hoja de registros\n';
+        reporte += `   Estado: ${prueba1.success ? '✅ OK' : '❌ FALLÓ'}\n`;
+        if (prueba1.data) {
+            reporte += `   Total filas: ${prueba1.data.totalFilas || 0}\n`;
+            reporte += `   Encabezados: ${(prueba1.data.encabezados || []).join(', ')}\n`;
+            if (prueba1.data.encabezadosFaltantes?.length > 0) {
+                reporte += `   ⚠️ Faltantes: ${prueba1.data.encabezadosFaltantes.join(', ')}\n`;
+            }
+            reporte += `   Calidad: ${prueba1.data.calidad?.porcentajeCompletos || 0}% completos\n`;
+            reporte += `   Tipos: RECAUDO=${prueba1.data.tipos?.RECAUDO || 0}, EGRESO=${prueba1.data.tipos?.EGRESO || 0}, COMPRA=${prueba1.data.tipos?.COMPRA || 0}\n`;
+        }
+        reporte += '\n';
+        
+        const prueba2 = data.pruebas?.obtencionDatos || {};
+        reporte += '📋 PRUEBA 2: Obtención de datos\n';
+        reporte += `   Estado: ${prueba2.success ? '✅ OK' : '❌ FALLÓ'}\n`;
+        if (prueba2.data) {
+            reporte += `   Registros: ${prueba2.data.totalFilas || 0}\n`;
+            if (prueba2.data.problemas?.length > 0) {
+                reporte += `   ⚠️ Problemas: ${prueba2.data.problemas.join(', ')}\n`;
+            }
+            if (prueba2.data.primerRegistro) {
+                reporte += `   Primer registro: ${JSON.stringify(prueba2.data.primerRegistro).substring(0, 100)}...\n`;
+            }
+        }
+        reporte += '\n';
+        
+        const prueba3 = data.pruebas?.envioHTML || {};
+        reporte += '📋 PRUEBA 3: Envío al HTML\n';
+        reporte += `   Estado: ${prueba3.success ? '✅ OK' : '❌ FALLÓ'}\n`;
+        if (prueba3.data) {
+            reporte += `   Registros: ${prueba3.data.totalRegistros || 0}\n`;
+            if (prueba3.data.problemas?.length > 0) {
+                reporte += `   ⚠️ Problemas: ${prueba3.data.problemas.join(', ')}\n`;
+            }
+        }
+        reporte += '\n';
+        
+        const prueba4 = data.pruebas?.simulacionHTML || {};
+        reporte += '📋 PRUEBA 4: Simulación HTML\n';
+        reporte += `   Estado: ${prueba4.success ? '✅ OK' : '❌ FALLÓ'}\n`;
+        if (prueba4.data?.valido) {
+            reporte += `   Validación: ${prueba4.data.valido.dataEsArray ? '✅ Array válido' : '❌ No es array'}\n`;
+            reporte += `   Datos: ${prueba4.data.valido.dataLength || 0} registros\n`;
+        }
+        
+        reporte += '\n' + '═'.repeat(50) + '\n';
+        const todasOK = Object.values(data.pruebas || {}).every(p => p.success === true);
+        if (todasOK) {
+            reporte += '✅ TODAS LAS PRUEBAS PASARON CORRECTAMENTE\n';
+            reporte += '📋 El sistema debería funcionar correctamente\n';
+        } else {
+            reporte += '⚠️ ALGUNAS PRUEBAS FALLARON\n';
+            Object.keys(data.pruebas || {}).forEach(key => {
+                if (!data.pruebas[key].success) {
+                    reporte += `   ⚠️ ${key}: ${data.pruebas[key].mensaje || 'Error desconocido'}\n`;
+                }
+            });
+        }
+        
+        console.log('📋 Reporte generado:\n', reporte);
+        mostrarAlerta('📋 Diagnóstico completado. Revisa la consola (F12) para ver el reporte completo.', 'info', 'alertMessageRecaudo');
+        alert(reporte);
+    } else {
+        mostrarAlerta('❌ Error en diagnóstico: ' + (resultado.error || 'Desconocido'), 'error', 'alertMessageRecaudo');
+    }
+}
+
+async function diagnosticarRapidoHTML() {
+    console.log('🔍 ===== DIAGNÓSTICO RÁPIDO DESDE HTML =====');
+    
+    mostrarAlerta('⏳ Ejecutando diagnóstico rápido...', 'info', 'alertMessageRecaudo');
+    
+    const resultado = await llamarAPI('getHistorial', { filtros: {} });
+    
+    console.log('✅ obtenerHistorialRegistros exitoso:', {
+        success: resultado.success,
+        total: resultado.total,
+        totalFiltrado: resultado.totalFiltrado,
+        dataLength: resultado.data ? resultado.data.length : 0
+    });
+    
+    if (resultado.data && resultado.data.length > 0) {
+        console.log('📋 Primer registro:', resultado.data[0]);
+        console.log('📋 Último registro:', resultado.data[resultado.data.length - 1]);
+        mostrarAlerta(`✅ ${resultado.data.length} registros encontrados. Revisa la consola (F12)`, 'success', 'alertMessageRecaudo');
+    } else {
+        console.warn('⚠️ No hay registros en la hoja');
+        mostrarAlerta('⚠️ No hay registros en la hoja', 'warning', 'alertMessageRecaudo');
+    }
+    
+    const statsResult = await llamarAPI('getEstadisticasHistorial', { filtros: {} });
+    console.log('✅ Estadísticas:', statsResult);
+}
+
+async function verificarEstructuraDatosHTML() {
+    console.log('🔍 ===== VERIFICANDO ESTRUCTURA DE DATOS =====');
+    
+    const resultado = await llamarAPI('diagnosticarObtencionDatos');
+    
+    console.log('📋 Resultado de verificación:', resultado);
+    
+    if (resultado.success && resultado.data) {
+        const registros = resultado.data.muestra || [];
+        console.log(`📊 Total registros: ${resultado.data.totalFilas || 0}`);
+        
+        if (registros.length > 0) {
+            const primerRegistro = registros[0];
+            console.log('📋 Primer registro:', primerRegistro);
+            
+            const campos = Object.keys(primerRegistro);
+            console.log('📋 Campos disponibles:', campos);
+            
+            console.log('📋 Tipos de datos:');
+            Object.keys(primerRegistro).forEach(key => {
+                console.log(`   ${key}: ${typeof primerRegistro[key]}`);
+            });
+            
+            const vacios = Object.keys(primerRegistro).filter(key => 
+                primerRegistro[key] === '' || 
+                primerRegistro[key] === null || 
+                primerRegistro[key] === undefined
+            );
+            
+            if (vacios.length > 0) {
+                console.warn('⚠️ Campos vacíos:', vacios);
+            } else {
+                console.log('✅ Todos los campos tienen datos');
+            }
+            
+            mostrarAlerta(`✅ Verificación completada. ${resultado.data.totalFilas || 0} registros encontrados. Revisa la consola (F12)`, 'success', 'alertMessageRecaudo');
+        } else {
+            console.warn('⚠️ No hay registros');
+            mostrarAlerta('⚠️ No hay registros en la hoja', 'warning', 'alertMessageRecaudo');
+        }
+    } else {
+        console.error('❌ Error en verificación:', resultado.error);
+        mostrarAlerta('❌ Error: ' + (resultado.error || 'Desconocido'), 'error', 'alertMessageRecaudo');
+    }
+}
+
+async function inicializarSistema() {
+    mostrarAlerta('⏳ Inicializando sistema...', 'info', 'alertMessageRecaudo');
+    
+    const resultado = await llamarAPI('inicializar');
+    
+    if (resultado.success) {
+        mostrarAlerta('✅ Sistema inicializado correctamente', 'success', 'alertMessageRecaudo');
+        await cargarFacturasRecaudo();
+        await cargarClientesRecaudo();
+        await cargarFacturasConSIIGORecaudo();
+        await cargarSIIGOSRecaudo();
+        await cargarCuentasCotilEgresos();
+        await cargarCuentasCotilCompra();
+        await cargarListasCodigosRecaudo();
+        await cargarListasCodigosEgresos();
+        await cargarListasCodigosCompra();
+    } else {
+        mostrarAlerta('❌ Error: ' + (resultado.error || 'Desconocido'), 'error', 'alertMessageRecaudo');
+    }
+}
+
+async function generarInformeDiario() {
+    const fecha = document.getElementById('fechaDesde').value || new Date().toISOString().split('T')[0];
+    
+    if (!URL_INFORME_DIARIO || URL_INFORME_DIARIO === '') {
+        mostrarAlerta('⚠️ La URL del informe diario no está configurada.', 'error', 'alertMessageRecaudo');
+        return;
+    }
+    
+    mostrarAlerta('⏳ Generando informe del día...', 'info', 'alertMessageRecaudo');
+    
+    const resultado = await llamarAPI('getInformeDia', { fecha: fecha });
+    
+    if (resultado.success && resultado.data) {
+        const paquete = resultado.data;
+        mostrarAlerta('✅ Informe generado correctamente', 'success', 'alertMessageRecaudo');
+        
+        const urlCompleta = URL_INFORME_DIARIO + '?datos=' + encodeURIComponent(JSON.stringify(paquete));
+        console.log('📤 Abriendo URL:', urlCompleta);
+        
+        const ventana = window.open(urlCompleta, '_blank', 'width=800,height=600,resizable=yes,scrollbars=yes');
+        
+        if (ventana) {
+            ventana.focus();
+            mostrarAlerta('📄 Informe abierto en nueva ventana', 'success', 'alertMessageRecaudo');
+        } else {
+            mostrarAlerta('⚠️ Permite ventanas emergentes o haz clic en el enlace', 'warning', 'alertMessageRecaudo');
+        }
+    } else {
+        mostrarAlerta('❌ ' + (resultado.error || 'Error al generar informe'), 'error', 'alertMessageRecaudo');
+    }
+}
+
+// ========================================================================
+//  🚀 INICIALIZACIÓN AL CARGAR LA PÁGINA
+// ========================================================================
+
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('🚀 ===== INICIANDO SICSa (API REST) =====');
+    console.log('📡 API URL:', API_URL);
+    
+    // Cargar todos los datos necesarios
+    await cargarTrabajadoresRecaudo();
+    await cargarFacturasRecaudo();
+    await cargarClientesRecaudo();
+    await cargarFacturasConSIIGORecaudo();
+    await cargarSIIGOSRecaudo();
+    await cargarListasCodigosRecaudo();
+    
+    await cargarCuentasCotilEgresos();
+    await cargarListasCodigosEgresos();
+    
+    await cargarCuentasCotilCompra();
+    await cargarListasCodigosCompra();
+    
+    // Inicializar tablas con filas vacías
+    for (let i = 0; i < 3; i++) {
+        agregarFilaRecaudo();
+    }
+    for (let i = 0; i < 3; i++) {
+        agregarFilaEgresos();
+    }
+    for (let i = 0; i < 3; i++) {
+        agregarFilaCompra();
+    }
+    
+    // Configurar eventos de tabs
+    document.querySelectorAll('.pos-tab[data-tab]').forEach(tab => {
+        tab.addEventListener('click', function() {
+            const tabName = this.dataset.tab;
+            document.querySelectorAll('.pos-tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            
+            const filterVendedor = document.getElementById('filterVendedor');
+            if (tabName === 'egresos' || tabName === 'compra') {
+                filterVendedor.style.display = 'none';
+            } else {
+                filterVendedor.style.display = 'flex';
+            }
+        });
+    });
+    
+    // Configurar eventos de botones
+    document.getElementById('agregarFilaRecaudo').addEventListener('click', () => agregarFilaRecaudo());
+    document.getElementById('cargarTransaccionesBtn').addEventListener('click', cargarTransaccionesDia);
+    document.getElementById('guardarRecaudoBtn').addEventListener('click', () => guardarAprobados('RECAUDO'));
+    document.getElementById('limpiarRecaudoBtn').addEventListener('click', () => limpiarTabla('RECAUDO'));
+    
+    document.getElementById('agregarFilaEgresos').addEventListener('click', () => agregarFilaEgresos());
+    document.getElementById('guardarEgresosBtn').addEventListener('click', () => guardarAprobados('EGRESO'));
+    document.getElementById('limpiarEgresosBtn').addEventListener('click', () => limpiarTabla('EGRESO'));
+    
+    document.getElementById('agregarFilaCompra').addEventListener('click', () => agregarFilaCompra());
+    document.getElementById('guardarCompraBtn').addEventListener('click', guardarAprobadosCompra);
+    document.getElementById('limpiarCompraBtn').addEventListener('click', () => limpiarTabla('COMPRA'));
+    
+    document.getElementById('workerSelect').addEventListener('change', function() {
+        renderizarRecaudo();
+    });
+    
+    // Configurar fechas por defecto
+    const hoy = new Date().toISOString().split('T')[0];
+    document.getElementById('fechaDesde').value = hoy;
+    document.getElementById('fechaHasta').value = hoy;
+    
+    // Actualizar estadísticas
+    await actualizarEstadisticas();
+    
+    console.log('🚀 ===== SICSa INICIADO CORRECTAMENTE =====');
+});
+
+// Cerrar modales con ESC
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        cerrarModalHistorial();
+        cerrarModalEliminarAbono();
+    }
+});
+
+document.getElementById('modalHistorial').addEventListener('click', function(e) {
+    if (e.target === this) {
+        cerrarModalHistorial();
+    }
+});
+
+console.log('✅ SICSa - API REST cargado correctamente');
+console.log('📡 Usando API URL:', API_URL);
+</script>
+</body>
+</html>
